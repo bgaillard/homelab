@@ -1,0 +1,8 @@
+---
+# @see https://linuxcontainers.org/incus/docs/main/installing/
+- name: Install 'incus' APT packages
+  ansible.builtin.package:
+    name:
+      - incus
+      - incus-base
+    state: latest
