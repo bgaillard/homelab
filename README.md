@@ -6,7 +6,7 @@ The Ansible playbook suppose the Home lab is accessible using the `homelab` host
 
 ```ssh
 Host homelab
-    HostName <YOUE_HOME_LAB_SERVER_IP_OR_HOSTNAME>
+    HostName <YOUR_HOME_LAB_SERVER_IP_OR_HOSTNAME>
     User <USERNAME>
 ```
 
