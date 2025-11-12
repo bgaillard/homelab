@@ -1,0 +1,26 @@
+---
+# @see https://discuss.linuxcontainers.org/t/web-ui-for-incus/18198/41
+# @see https://discuss.linuxcontainers.org/t/tutorial-installing-the-web-ui-for-incus-on-fedora-or-other-redhat-based-distros/20986
+
+- name: Create temporary directory to download 'incus-ui' .deb package
+  ansible.builtin.tempfile:
+    state: directory
+  register: incus_ui_tmp_dir
+
+- name: Download 'incus-ui' download page
+  ansible.builtin.get_url:
+    url: https://pkgs.zabbly.com/incus/stable/pool/main/i/incus/
+    dest: "{{ incus_ui_tmp_dir.path }}/incus-ui.html"
+    mode: "0400"
+
+- name: Extract 'incus-ui' .deb package URL from download page
+  ansible.builtin.shell:
+    cmd: cat incus-ui.html | grep 'incus-ui-canonical' | grep 'amd64' | tail -n1 | sed 's/^.*\(incus-ui.*\.deb\).*$/\1/'
+  args:
+    chdir: "{{ incus_ui_tmp_dir.path }}"
+  register: incus_ui_deb_filename
+
+- name: Install 'incus-ui' .deb package
+  become: true
+  ansible.builtin.apt:
+    deb: "https://pkgs.zabbly.com/incus/stable/pool/main/i/incus/{{ incus_ui_deb_filename.stdout }}"
