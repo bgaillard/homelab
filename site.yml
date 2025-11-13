@@ -1,4 +1,5 @@
 ---
 - hosts: homelab
   roles:
+    - cron
     - incus

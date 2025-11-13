@@ -1,0 +1,14 @@
+---
+# Poweroff machine at 1:00 AM every day
+- name: Schedule daily poweroff at 1:00 AM
+  become: true
+  ansible.builtin.cron:
+    name: "Daily Poweroff at 1:00 AM"
+    job: "/sbin/poweroff"
+    state: present
+    user: root
+    minute: "30"
+    hour: "21"
+    weekday: "*"
+    month: "*"
+    day: "*"
