@@ -21,7 +21,8 @@
   become: true
   ansible.builtin.shell:
     stdin: |
-      config: {}
+      config: 
+        core.https_address: "{{ ansible_default_ipv4.address }}:8443"
       networks: []
       storage_pools: []
       storage_volumes: []
