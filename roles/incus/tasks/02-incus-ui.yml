@@ -41,3 +41,8 @@
       [Service]
       Environment=INCUS_UI=/opt/incus/ui/
     mode: "0644"
+
+- name: Clean up temporary directory
+  ansible.builtin.file:
+    path: "{{ incus_ui_tmp_dir.path }}"
+    state: absent

@@ -7,8 +7,8 @@
     job: "/sbin/poweroff"
     state: present
     user: root
-    minute: "30"
-    hour: "21"
+    minute: "0"
+    hour: "1"
     weekday: "*"
     month: "*"
     day: "*"
