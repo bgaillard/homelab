@@ -2,7 +2,9 @@
 
 ## SSH configuration
 
-The Ansible playbook suppose the Home lab is accessible using the `homelab` host name. If this is not the case just add an alias to your SSH configuration file (`~/.ssh/config`):
+The Ansible playbook suppose the Home lab is accessible using the `homelab` host name / domain name.
+
+If this is not the case just add an alias to your SSH configuration file (`~/.ssh/config`):
 
 ```ssh
 Host homelab
