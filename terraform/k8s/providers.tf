@@ -2,7 +2,7 @@ provider "incus" {
   accept_remote_certificate = true
   default_remote            = "homelab"
 
-  # The remote is configured inthe  '~/.config/incus/config.yml' file of the Incus client.
+  # The remote is configured in the  '~/.config/incus/config.yml' file of the Incus client.
   #
   # Example of content to place in the Incus client 'config.yml' file.
   #

@@ -4,12 +4,38 @@ resource "incus_storage_pool" "etcd" {
   driver  = "dir"
 }
 
+# TODO: See how to pass the Kubernetes Conformance tests
+# 
+# @see https://kubernetes.io/blog/2017/10/software-conformance-certification/
+
+# TODO: Setup a firewall on nodes to only allow necessary ports
+
+# TODO: Create 'etcd' Incus images with Vagrant to prevent using brittle cloud-init configuration every time.
+
+# TODO: We should use Hashicorp Vault to create the CA for the following files
+#       - /etc/kubernetes/pki/etcd/ca.crt
+#       - /etc/kubernetes/pki/etcd/ca.key
+
 # TODO: Remove the 'no imagefs label for configured runtime' message in 'systemctl status kubelet'
 # 
 # @see https://kubernetes.io/blog/2024/01/23/kubernetes-separate-image-filesystem/
 
+# TODO: Check health should be done using our monitoring solution (Prometheus + Grafana + Alertmanager)
+#
+#       Waiting for that here are the commands to execute to check the etcd health:
+#
+#       cd  /tmp
+#       curl -L -o etcd.tar.gz https://github.com/etcd-io/etcd/releases/download/v3.6.6/etcd-v3.6.6-linux-amd64.tar.gz
+#       tar -xf etcd.tar.gz
+#       cd etcd-v3.6.6-linux-amd64
+#       ETCDCTL_API=3 ./etcdctl \
+#         --cert /etc/kubernetes/pki/etcd/peer.crt \
+#         --key /etc/kubernetes/pki/etcd/peer.key \
+#         --cacert /etc/kubernetes/pki/etcd/ca.crt \
+#         --endpoints https://etcd-2:2379 endpoint health
 
 # @see https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/ha-topology/#external-etcd-topology
+# @see https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/setup-ha-etcd-with-kubeadm/#setting-up-the-cluster
 resource "incus_instance" "etcd" {
   for_each = local.etcds
 
@@ -51,86 +77,119 @@ resource "incus_instance" "etcd" {
     #        is that it seems required to have specific configuration for 'etcd'
     #
     # @see https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#installing-kubeadm-kubelet-and-kubectl
-    "cloud-init.user-data" = <<-EOF
-      #cloud-config
-      package_update: true
-      package_upgrade: true
-      packages:
-        - apt-transport-https 
-        - ca-certificates 
-        - curl 
-        - gpg
-        - containerd
+    "cloud-init.user-data" = join(
+      "\n",
+      [
+        "#cloud-config", 
+        yamlencode(
+          {
+            package_update = true
+            package_upgrade = true
+            packages = [
+              "apt-transport-https",
+              "ca-certificates",
+              "curl",
+              "gpg",
+              "containerd"
+            ]
+            runcmd = [
+              "curl -fsSL https://pkgs.k8s.io/core:/stable:/v${var.kubernetes_version}/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg",
+              "echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v${var.kubernetes_version}/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list",
+              "apt-get update",
+              "apt-get install -y kubelet kubeadm kubectl",
+              "apt-mark hold kubelet kubeadm kubectl",
+              "systemctl enable --now kubelet",
 
-      runcmd:
-        - curl -fsSL https://pkgs.k8s.io/core:/stable:/v${var.kubernetes_version}/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-        - echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v${var.kubernetes_version}/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
-        - apt-get update
-        - apt-get install -y kubelet kubeadm kubectl
-        - apt-mark hold kubelet kubeadm kubectl
-        - systemctl enable --now kubelet
+              "kubeadm init phase certs etcd-server --config=/tmp/${each.value.name}/kubeadmcfg.yaml",
+              "kubeadm init phase certs etcd-peer --config=/tmp/${each.value.name}/kubeadmcfg.yaml",
+              "kubeadm init phase certs etcd-healthcheck-client --config=/tmp/${each.value.name}/kubeadmcfg.yaml",
+              "kubeadm init phase certs apiserver-etcd-client --config=/tmp/${each.value.name}/kubeadmcfg.yaml",
+              "cp -R /etc/kubernetes/pki /tmp/${each.value.name}/",
 
-      write_files:
-        - path: /etc/kubernetes/kubelet.conf
-          content: |
-            apiVersion: kubelet.config.k8s.io/v1beta1
-            kind: KubeletConfiguration
-            authentication:
-              anonymous:
-                enabled: false
-              webhook:
-                enabled: false
-            authorization:
-              mode: AlwaysAllow
-            # Important because we are using Debian which uses systemd
-            # 
-            # @see https://kubernetes.io/docs/setup/production-environment/container-runtimes/#cgroup-drivers
-            cgroupDriver: "systemd"
-            address: 127.0.0.1
-            containerRuntimeEndpoint: unix:///var/run/containerd/containerd.sock
-            staticPodPath: /etc/kubernetes/manifests
+              "kubeadm init phase etcd local --config=/tmp/${each.value.name}/kubeadmcfg.yaml",
 
-        - path: /etc/systemd/system/kubelet.service.d/20-etcd-service-manager.conf
-          content: |
-            [Service]
-            ExecStart=
-            ExecStart=/usr/bin/kubelet --config=/etc/kubernetes/kubelet.conf
-            Restart=always
-
-        - path: /root/kubeadmcfg.yaml
-          content: |
-            ---
-            apiVersion: "kubeadm.k8s.io/v1beta4"
-            kind: InitConfiguration
-            nodeRegistration:
-                name: ${each.value.name}
-            localAPIEndpoint:
-                advertiseAddress: ${each.value.ipv4_address}
-            ---
-            apiVersion: "kubeadm.k8s.io/v1beta4"
-            kind: ClusterConfiguration
-            etcd:
-                local:
-                    serverCertSANs:
-                    - "${each.value.ipv4_address}"
-                    peerCertSANs:
-                    - "${each.value.ipv4_address}"
-                    extraArgs:
-                    - name: initial-cluster
-                      value: ${local.etcds.etcd_1.name}=https://${local.etcds.etcd_1.ipv4_address}:2380,${local.etcds.etcd_2.name}=https://${local.etcds.etcd_2.ipv4_address}:2380,${local.etcds.etcd_3.name}=https://${local.etcds.etcd_3.ipv4_address}:2380
-                    - name: initial-cluster-state
-                      value: new
-                    - name: name
-                      value: ${each.value.name}
-                    - name: listen-peer-urls
-                      value: https://${each.value.ipv4_address}:2380
-                    - name: listen-client-urls
-                      value: https://${each.value.ipv4_address}:2379
-                    - name: advertise-client-urls
-                      value: https://${each.value.ipv4_address}:2379
-                    - name: initial-advertise-peer-urls
-                      value: https://${each.value.ipv4_address}:2380
+              # TODO: See why we have to restart the kubelet here, it's not in the guide. Perhaps the guide suppose
+              #        we have to start it at the end or manifest can be "reloaded" automatically?
+              "systemctl restart kubelet"
+            ]
+            write_files = [
+              {
+                path = "/etc/kubernetes/kubelet.conf"
+                content = yamlencode(
+                  {
+                    apiVersion = "kubelet.config.k8s.io/v1beta1"
+                    kind = "KubeletConfiguration"
+                    authentication = {
+                      anonymous = {
+                        enabled = false
+                      }
+                      webhook = {
+                        enabled = false
+                      }
+                    }
+                    authorization = {
+                      mode = "AlwaysAllow"
+                    }
+                    # Important because we are using Debian which uses systemd
+                    # 
+                    # @see https://kubernetes.io/docs/setup/production-environment/container-runtimes/#cgroup-drivers
+                    cgroupDriver = "systemd"
+                    address = "127.0.0.1"
+                    containerRuntimeEndpoint = "unix:///var/run/containerd/containerd.sock"
+                    staticPodPath = "/etc/kubernetes/manifests"
+                  }
+                )
+              },
+              {
+                path = "/etc/systemd/system/kubelet.service.d/20-etcd-service-manager.conf"
+                content = <<EOT
+[Service]
+ExecStart=
+ExecStart=/usr/bin/kubelet --config=/etc/kubernetes/kubelet.conf
+Restart=always
+EOT
+              },
+              {
+                path = "/tmp/${each.value.name}/kubeadmcfg.yaml"
+                content = <<EOF
+---
+apiVersion: "kubeadm.k8s.io/v1beta4"
+kind: InitConfiguration
+nodeRegistration:
+    name: ${each.value.name}
+localAPIEndpoint:
+    advertiseAddress: ${each.value.ipv4_address}
+---
+apiVersion: "kubeadm.k8s.io/v1beta4"
+kind: ClusterConfiguration
+etcd:
+    local:
+        serverCertSANs:
+        - "${each.value.ipv4_address}"
+        peerCertSANs:
+        - "${each.value.ipv4_address}"
+        extraArgs:
+        - name: initial-cluster
+          value: ${local.etcds.etcd_1.name}=https://${local.etcds.etcd_1.ipv4_address}:2380,${local.etcds.etcd_2.name}=https://${local.etcds.etcd_2.ipv4_address}:2380,${local.etcds.etcd_3.name}=https://${local.etcds.etcd_3.ipv4_address}:2380
+        - name: initial-cluster-state
+          value: new
+        - name: name
+          value: ${each.value.name}
+        - name: listen-peer-urls
+          value: https://${each.value.ipv4_address}:2380
+        - name: listen-client-urls
+          value: https://${each.value.ipv4_address}:2379
+        - name: advertise-client-urls
+          value: https://${each.value.ipv4_address}:2379
+        - name: initial-advertise-peer-urls
+          value: https://${each.value.ipv4_address}:2380
 EOF
+              }
+            ]
+          }
+        )
+      ]
+    )
   }
 
   device {
@@ -142,5 +201,9 @@ EOF
       pool = incus_storage_pool.etcd.name
       size = "5GB"
     }
+  }
+
+  provisioner "local-exec" {
+    command = "${path.module}/etcd/copy-ca.sh ${each.value.name}"
   }
 }
