@@ -14,6 +14,17 @@ resource "incus_profile" "this" {
       parent  = incus_network.this.name
     }
   }
+
+  device {
+    name = "root"
+    type = "disk"
+
+    properties = {
+      path = "/"
+      pool = incus_storage_pool.this.name
+      size = "5GB"
+    }
+  }
 }
 
 # Profile common to control plane and worker nodes.

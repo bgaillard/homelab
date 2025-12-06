@@ -1,14 +1,10 @@
-resource "incus_storage_pool" "load_balancer" {
-  project = incus_project.this.name
-  name    = "load-balancer"
-  driver  = "dir"
-}
+# TODO: It would be much more user friendly to have a DNS name here instead of an IP address for the Load Balancer VIP.
 
 # @see https://github.com/kubernetes/kubeadm/blob/main/docs/ha-considerations.md#keepalived-and-haproxy
 # @see https://itnext.io/create-a-highly-available-kubernetes-cluster-using-keepalived-and-haproxy-37769d0a65ba
 resource "incus_instance" "load_balancer" {
-  for_each = local.load_balancers
-  # for_each = {}
+  # for_each = local.load_balancers
+  for_each = {}
 
   project     = incus_project.this.name
   name        = each.value.name
@@ -24,9 +20,20 @@ resource "incus_instance" "load_balancer" {
     type = "nic"
 
     properties = {
-      nictype = "bridged"
-      parent  = incus_network.this.name
+      nictype        = "bridged"
+      parent         = incus_network.this.name
       "ipv4.address" = each.value.ipv4_address
+    }
+  }
+
+  device {
+    name = "root"
+    type = "disk"
+
+    properties = {
+      path = "/"
+      pool = incus_storage_pool.this.name
+      size = "1GB"
     }
   }
 
@@ -36,10 +43,10 @@ resource "incus_instance" "load_balancer" {
     "cloud-init.user-data" = join(
       "\n",
       [
-        "#cloud-config", 
+        "#cloud-config",
         yamlencode(
           {
-            package_update = true
+            package_update  = true
             package_upgrade = true
             packages = [
               "keepalived"
@@ -59,7 +66,7 @@ resource "incus_instance" "load_balancer" {
             ]
             write_files = [
               {
-                path = "/etc/keepalived/keepalived.conf",
+                path    = "/etc/keepalived/keepalived.conf",
                 content = <<-EOF
 global_defs {
   router_id LVS_DEVEL
@@ -93,7 +100,7 @@ EOF
               },
 
               {
-                path = "/etc/keepalived/check_api_server.sh",
+                path    = "/etc/keepalived/check_api_server.sh",
                 content = <<-EOF
 #!/bin/sh
 
@@ -108,7 +115,7 @@ EOF
 
               # FIXME: HaProxy is configured with the root user here, we should use haproxy/haproxy
               {
-                path = "/etc/haproxy/haproxy.cfg",
+                path    = "/etc/haproxy/haproxy.cfg",
                 content = <<-EOF
 global
         log /dev/log    local0
@@ -154,25 +161,13 @@ backend kube-apiserver
     default-server inter 10s downinter 5s rise 2 fall 2 slowstart 60s maxconn 250 maxqueue 256 weight 100
     server control-plane-1 ${local.control_planes.control_plane_1.ipv4_address}:6443 check
     server control-plane-2 ${local.control_planes.control_plane_2.ipv4_address}:6443 check
-    server control-plane-3 ${local.control_planes.control_plane_2.ipv4_address}:6443 check
+    server control-plane-3 ${local.control_planes.control_plane_3.ipv4_address}:6443 check
 EOF
               }
             ]
           }
         )
       ]
-   )
-  }
-
-  device {
-    name = "root"
-    type = "disk"
-
-    properties = {
-      path = "/"
-      pool = incus_storage_pool.load_balancer.name
-      size = "1GB"
-    }
+    )
   }
 }
-

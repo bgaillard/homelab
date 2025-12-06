@@ -1,0 +1,8 @@
+#!/bin/bash
+
+ETCDCTL_API=3 /usr/bin/etcdctl \
+	--cert /etc/kubernetes/pki/etcd/peer.crt \
+        --key /etc/kubernetes/pki/etcd/peer.key \
+        --cacert /etc/kubernetes/pki/etcd/ca.crt \
+        --endpoints https://etcd-1:2379,https://etcd-2:2379,https://etcd-3:2379 "$@"
+

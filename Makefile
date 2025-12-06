@@ -3,6 +3,9 @@ SHELL := /bin/bash
 ansible-playbook: ## Run Ansible playbook
 	@ansible-playbook --inventory ansible/hosts.yml ansible/site.yml
 
+packer-k8s-etcd-build: ## Build K8s Etcd Packer image
+	@cd packer/k8s/etcd && make build
+
 terraform-k8s-apply: ## Plan K8s Terraform
 	@cd terraform/k8s && terraform apply
 
