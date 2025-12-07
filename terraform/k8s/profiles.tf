@@ -22,7 +22,7 @@ resource "incus_profile" "this" {
     properties = {
       path = "/"
       pool = incus_storage_pool.this.name
-      size = "5GB"
+      size = "6GB"
     }
   }
 }

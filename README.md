@@ -1,5 +1,18 @@
 # Home lab
 
+## Ansible
+
+```bash
+# Install Ansible using pip
+python -m pip install --user ansible
+
+# If Ansible is already installed but python has been updated, you may need to reinstall Ansible
+python -m pip install --user --upgrade ansible
+
+# Install required Ansible collections
+ansible-galaxy collection install community.general
+```
+
 ## SSH configuration
 
 The Ansible playbook suppose the Home lab is accessible using the `homelab` host name / domain name.

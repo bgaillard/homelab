@@ -1,14 +1,3 @@
 ---
-# Poweroff machine at 1:00 AM every day
-- name: Schedule daily poweroff at 1:00 AM
-  become: true
-  ansible.builtin.cron:
-    name: "Daily Poweroff at 1:00 AM"
-    job: "/sbin/poweroff"
-    state: present
-    user: root
-    minute: "0"
-    hour: "1"
-    weekday: "*"
-    month: "*"
-    day: "*"
+- import_tasks: 00-poweroff.yml
+- import_tasks: 10-backup-k8s-etcd.yml

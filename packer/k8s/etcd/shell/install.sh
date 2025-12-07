@@ -53,6 +53,7 @@ cd /tmp && \
   curl -sLo etcd.tar.gz https://github.com/etcd-io/etcd/releases/download/v3.6.6/etcd-v3.6.6-linux-amd64.tar.gz && \
   tar -xf etcd.tar.gz && \
   cp etcd-v3.6.6-linux-amd64/etcdctl /usr/bin/etcdctl && \
+  cp etcd-v3.6.6-linux-amd64/etcdutl /usr/bin/etcdutl && \
   rm -rf etcd-v3.6.6-linux-amd64 etcd.tar
 
 

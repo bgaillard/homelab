@@ -43,4 +43,3 @@
         description: Default Incus project
         name: default
     cmd: incus admin init --preseed
-

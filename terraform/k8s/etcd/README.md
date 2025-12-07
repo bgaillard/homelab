@@ -78,6 +78,10 @@ openssl x509 -in /etc/kubernetes/pki/etcd/ca.crt -noout -text
 ```
 
 
+## Backup
+
+
+
 ## TODO
 
 * [ ] Understand an adapt the CNI plugin configuration 

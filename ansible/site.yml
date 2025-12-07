@@ -3,3 +3,5 @@
   roles:
     - cron
     - incus
+    - packages
+    - restic

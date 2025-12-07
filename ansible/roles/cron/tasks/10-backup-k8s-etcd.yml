@@ -1,0 +1,26 @@
+---
+- name: Create the '~/.local/bin' directory if it does not exist
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.local/bin"
+    state: directory
+    mode: '0700'
+
+- name: Copy file '~/.local/bin/backup-k8s-etcd'
+  ansible.builtin.copy:
+    src: .local/bin/backup-k8s-etcd
+    dest: "{{ ansible_env.HOME }}/.local/bin/backup-k8s-etcd"
+    mode: u=rx
+    force: true
+
+- name: Configure etcd backup cron job
+  become: true
+  ansible.builtin.cron:
+    name: "Backup the Kubernetes etcd database"
+    job: "{{ ansible_env.HOME }}/.local/bin/backup-k8s-etcd >> {{ ansible_env.HOME }}/.local/bin/backup-k8s-etcd.log 2>&1"
+    state: present
+    user: "{{ ansible_env.USER }}"
+    minute: "0"
+    hour: "0"
+    weekday: "*"
+    month: "*"
+    day: "*"
