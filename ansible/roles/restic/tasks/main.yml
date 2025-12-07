@@ -8,16 +8,16 @@
 
 - name: Create the '~/.local/bin' directory if it does not exist
   ansible.builtin.file:
-    path: "{{ ansible_env.HOME }}/.local/bin"
+    path: "{{ ansible_facts['env']['HOME'] }}/.local/bin"
     state: directory
     mode: '0700'
 
 - name: Render the '~/.local/bin/restic-k8s-etcd' script
   ansible.builtin.template:
     src: .local/bin/restic-k8s-etcd.j2
-    dest: "{{ ansible_env.HOME }}/.local/bin/restic-k8s-etcd"
-    owner: "{{ ansible_env.USER }}"
-    group: "{{ ansible_env.USER }}"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.local/bin/restic-k8s-etcd"
+    owner: "{{ ansible_facts['env']['USER'] }}"
+    group: "{{ ansible_facts['env']['USER'] }}"
     mode: u=rx
   vars:
     swiss_backup_location: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupLocation') | first }}" 
@@ -32,6 +32,6 @@
   ansible.builtin.file:
     path: /srv/backups
     state: directory
-    owner: "{{ ansible_env.USER }}"
-    group: "{{ ansible_env.USER }}"
+    owner: "{{ ansible_facts['env']['USER'] }}"
+    group: "{{ ansible_facts['env']['USER'] }}"
     mode: '0700'

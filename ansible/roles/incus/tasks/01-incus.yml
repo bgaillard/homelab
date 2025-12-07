@@ -7,12 +7,12 @@
       - incus-base
     state: latest
 
-- name: Add the user '{{ ansible_env.USER }}' to the 'incus-admin' group
+- name: Add the user '{{ ansible_facts['env']['USER'] }}' to the 'incus-admin' group
   become: true
   ansible.builtin.user:
-    name: "{{ ansible_env.USER }}"
+    name: "{{ ansible_facts['env']['USER'] }}"
     shell: /bin/bash
-    group: "{{ ansible_env.USER }}"
+    group: "{{ ansible_facts['env']['USER'] }}"
     groups: incus-admin
     append: true
     state: present
@@ -22,7 +22,7 @@
   ansible.builtin.shell:
     stdin: |
       config: 
-        core.https_address: "{{ ansible_default_ipv4.address }}:8443"
+        core.https_address: "{{ ansible_facts['default_ipv4']['address'] }}:8443"
       networks: []
       storage_pools: []
       storage_volumes: []
