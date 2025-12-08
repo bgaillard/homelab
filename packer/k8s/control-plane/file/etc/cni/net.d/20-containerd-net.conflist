@@ -2,7 +2,6 @@
   "cniVersion": "1.0.0",
   "name": "containerd-net",
   "plugins": [
-    # @see https://www.cni.dev/plugins/current/main/bridge/
     {
       "type": "bridge",
       "bridge": "cni0",
@@ -25,8 +24,6 @@
         ]
       }
     },
-
-    # @see https://www.cni.dev/plugins/current/meta/portmap/
     {
       "type": "portmap",
       "capabilities": {"portMappings": true},

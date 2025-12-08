@@ -32,7 +32,12 @@ Components: stable
 Signed-By: /etc/apt/keyrings/docker.asc
 EOF
 apt-get update -y
-apt-get install -y containerd.io
+
+# Warning: Version 2.2.0 of containerd has a bug, waiting for version 2.2.1 we install version '2.1.5-1~debian.13~trixie'
+#
+# @see https://forum.openmediavault.org/index.php?thread/57730-bug-in-containerd-impacting-dozzle-and-potentially-other-containers/
+# @see https://github.com/containerd/cgroups/issues/378
+apt-get install -y containerd.io=2.1.5-1~debian.13~trixie
 
 
 # WARNING: Without 'systemd-timesyncd' installed the following warning can be encountered while running 
