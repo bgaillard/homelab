@@ -1,6 +1,5 @@
 resource "incus_instance" "etcd" {
-  for_each = local.etcds
-  # for_each = {}
+  for_each = var.etcd_enabled ? local.etcds : {}
 
   type        = "virtual-machine"
   project     = incus_project.this.name

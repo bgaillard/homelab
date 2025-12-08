@@ -3,8 +3,14 @@ SHELL := /bin/bash
 ansible-playbook: ## Run Ansible playbook
 	@ansible-playbook --inventory ansible/hosts.yml ansible/site.yml
 
+packer-k8s-control-plane-build: ## Build K8s Control Plane Packer image
+	@cd packer/k8s/control-plane && make build
+
 packer-k8s-etcd-build: ## Build K8s Etcd Packer image
 	@cd packer/k8s/etcd && make build
+
+packer-k8s-load-balancer-build: ## Build K8s Load Balancer Packer image
+	@cd packer/k8s/load-balancer && make build
 
 terraform-k8s-apply: ## Plan K8s Terraform
 	@cd terraform/k8s && terraform apply

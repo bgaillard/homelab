@@ -17,8 +17,8 @@ resource "incus_instance" "worker" {
   image = "images:debian/trixie/cloud"
 
   profiles = [
+    # Contains a default configuration for the network card and the root disk.
     incus_profile.this.name,
-    incus_profile.control_plane_or_worker_node.name,
   ]
 
   # @see https://linuxcontainers.org/incus/docs/main/reference/instance_options/

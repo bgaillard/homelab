@@ -14,10 +14,10 @@ for i in 1 2 3; do
   incus file push --project k8s --create-dirs "${CURRENT_DIR}"/etcd-${i}.old/etc/kubernetes/pki/etcd/ca.key homelab:etcd-${i}/etc/kubernetes/pki/etcd/ca.key 
   
   # Renew the certificates on the node
-  incus exec --project k8s homelab:etcd-${i} -- kubeadm certs renew apiserver-etcd-client --config=/root/kubeadmcfg.yaml
-  incus exec --project k8s homelab:etcd-${i} -- kubeadm certs renew etcd-healthcheck-client --config=/root/kubeadmcfg.yaml
-  incus exec --project k8s homelab:etcd-${i} -- kubeadm certs renew etcd-peer --config=/root/kubeadmcfg.yaml
-  incus exec --project k8s homelab:etcd-${i} -- kubeadm certs renew etcd-server --config=/root/kubeadmcfg.yaml
+  incus exec --project k8s homelab:etcd-${i} -- kubeadm certs renew apiserver-etcd-client --config=/root/kubeadm-config.yaml
+  incus exec --project k8s homelab:etcd-${i} -- kubeadm certs renew etcd-healthcheck-client --config=/root/kubeadm-config.yaml
+  incus exec --project k8s homelab:etcd-${i} -- kubeadm certs renew etcd-peer --config=/root/kubeadm-config.yaml
+  incus exec --project k8s homelab:etcd-${i} -- kubeadm certs renew etcd-server --config=/root/kubeadm-config.yaml
 
   # Pull the renewed certificates to backup them locally
   incus file pull --project k8s homelab:etcd-${i}/etc/kubernetes/pki/apiserver-etcd-client.crt "${CURRENT_DIR}"/etcd-${i}/etc/kubernetes/pki
@@ -32,9 +32,9 @@ for i in 1 2 3; do
   # Remove the CA key from the node for security reasons
   incus exec --project k8s homelab:etcd-${i} -- rm -f /etc/kubernetes/pki/etcd/ca.key
 
-  # Backup the CA and kubeadmcfg.yaml files to the new local etcd directory
+  # Backup the CA and kubeadm-config.yaml files to the new local etcd directory
   cp "${CURRENT_DIR}"/etcd-${i}.old/etc/kubernetes/pki/etcd/ca.* "${CURRENT_DIR}"/etcd-${i}/etc/kubernetes/pki/etcd/
-  cp "${CURRENT_DIR}"/etcd-${i}.old/root/kubeadmcfg.yaml "${CURRENT_DIR}"/etcd-${i}/root/kubeadmcfg.yaml
+  cp "${CURRENT_DIR}"/etcd-${i}.old/root/kubeadm-config.yaml "${CURRENT_DIR}"/etcd-${i}/root/kubeadm-config.yaml
 done
 
 for i in 1 2 3; do
@@ -47,5 +47,5 @@ for i in 1 2 3; do
   sleep 20
 
   # Regenerate the etcd static pod
-  incus exec --project k8s homelab:etcd-${i} -- kubeadm init phase etcd local --config=/root/kubeadmcfg.yaml
+  incus exec --project k8s homelab:etcd-${i} -- kubeadm init phase etcd local --config=/root/kubeadm-config.yaml
 done

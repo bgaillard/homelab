@@ -27,7 +27,7 @@ else
     exit 1
 fi
 
-cat << EOF > /root/kubeadmcfg.yaml
+cat << EOF > /root/kubeadm-config.yaml
 ---
 apiVersion: "kubeadm.k8s.io/v1beta4"
 kind: InitConfiguration
@@ -65,7 +65,7 @@ etcd:
           value: https://${HOST}:2380
 EOF
 
-kubeadm init phase certs etcd-server --config=/root/kubeadmcfg.yaml
-kubeadm init phase certs etcd-peer --config=/root/kubeadmcfg.yaml
-kubeadm init phase certs etcd-healthcheck-client --config=/root/kubeadmcfg.yaml
-kubeadm init phase certs apiserver-etcd-client --config=/root/kubeadmcfg.yaml
+kubeadm init phase certs etcd-server --config=/root/kubeadm-config.yaml
+kubeadm init phase certs etcd-peer --config=/root/kubeadm-config.yaml
+kubeadm init phase certs etcd-healthcheck-client --config=/root/kubeadm-config.yaml
+kubeadm init phase certs apiserver-etcd-client --config=/root/kubeadm-config.yaml

@@ -33,6 +33,6 @@ for i in 1 2 3; do
   incus file pull --project k8s homelab:etcd-${i}/etc/kubernetes/pki/etcd/server.crt "${CURRENT_DIR}"/etcd-${i}/etc/kubernetes/pki/etcd
   incus file pull --project k8s homelab:etcd-${i}/etc/kubernetes/pki/etcd/server.key "${CURRENT_DIR}"/etcd-${i}/etc/kubernetes/pki/etcd
 
-  # Pull the kubeadmcfg.yaml file to backup it locally
-  incus file pull --project k8s --create-dirs homelab:etcd-${i}/root/kubeadmcfg.yaml "${CURRENT_DIR}"/etcd-${i}/root/kubeadmcfg.yaml
+  # Pull the kubeadm-config.yaml file to backup it locally
+  incus file pull --project k8s --create-dirs homelab:etcd-${i}/root/kubeadm-config.yaml "${CURRENT_DIR}"/etcd-${i}/root/kubeadm-config.yaml
 done

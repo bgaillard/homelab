@@ -95,3 +95,6 @@ openssl x509 -in /etc/kubernetes/pki/etcd/ca.crt -noout -text
 * [ ] See if it's possible to update continuously apt packages, containerd and etcd versions with tools like Renovate for example
 * [ ] Improve the certificates renewal to propate the etcd client certificates to control plane nodes automatically
 * [ ] Improve the certificates renewal process to avoid downtime
+* [ ] Simplify the transmission of the Kubernetes version
+* [ ] Version the images with a version of Kubernetes and our own version (i.e. `1.32-1.0.0` for example)
+* [ ] Read https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/
