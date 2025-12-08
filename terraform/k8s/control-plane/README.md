@@ -5,7 +5,7 @@ After first start execute the following command on the `control-plane-1` node (s
 This command creates a Kubernetes secret named `kubeadm-certs` in the `kube-system` namespace that contains the certificates of the primary control plane node.
 
 ```bash
-kubeadm init --config /tmp/control-plane-1/kubeadm-config.yaml --upload-certs
+kubeadm init --config /root/kubeadm-config.yaml --upload-certs
 ```
 
 To re-upload the certificates and generate a new decryption key, use the following command on a control plane node that is already joined to the cluster.

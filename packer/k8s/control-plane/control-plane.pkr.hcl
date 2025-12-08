@@ -27,10 +27,15 @@ build {
 
   provisioner "shell" {
     inline = [
+      "mkdir -p /etc/cni/net.d",
       "mkdir -p /etc/kubernetes"
     ]
   }
 
+  provisioner "file" {
+    source = "file/etc/cni/net.d/20-containerd-net.conflist"
+    destination = "/etc/cni/net.d/20-containerd-net.conflist"
+  }
   provisioner "file" {
     source = "file/etc/kubernetes/kubelet.conf"
     destination = "/etc/kubernetes/kubelet.conf"
@@ -42,9 +47,11 @@ build {
 
   provisioner "shell" {
     inline = [
+      "chown root:root /etc/cni/net.d/20-containerd-net.conflist",
       "chown root:root /etc/kubernetes/kubelet.conf",
       "chown root:root /root/kubeadm-config.yaml",
 
+      "chmod 400 /etc/cni/net.d/20-containerd-net.conflist",
       "chmod 400 /etc/kubernetes/kubelet.conf",
       "chmod 400 /root/kubeadm-config.yaml"
     ]
@@ -56,4 +63,3 @@ build {
     ]
   }
 }
-
