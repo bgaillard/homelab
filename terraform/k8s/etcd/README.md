@@ -98,3 +98,4 @@ openssl x509 -in /etc/kubernetes/pki/etcd/ca.crt -noout -text
 * [ ] Simplify the transmission of the Kubernetes version
 * [ ] Version the images with a version of Kubernetes and our own version (i.e. `1.32-1.0.0` for example)
 * [ ] Read https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/
+* [ ] Install an internal Docker image registry with a cache to speedup image pulls. This one could also be used for Python, Debian packages, etc.

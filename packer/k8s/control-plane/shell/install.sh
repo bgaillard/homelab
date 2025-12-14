@@ -41,7 +41,7 @@ apt-get update -y
 # @see https://forum.openmediavault.org/index.php?thread/57730-bug-in-containerd-impacting-dozzle-and-potentially-other-containers/
 # @see https://github.com/containerd/cgroups/issues/378
 apt-get install -y containerd.io=2.1.5-1~debian.13~trixie
-
+systemctl restart containerd
 
 # WARNING: Without 'systemd-timesyncd' installed the following warning can be encountered while running 
 #          etcd.
@@ -56,6 +56,9 @@ cd  /tmp && \
   tar -xf nerdctl.tar.gz && \
   mv nerdctl /usr/bin/nerdctl && \
   rm -rf nerdctl.tar.gz
+
+# Pull docker images required by the Kubernetes Control Plane components
+kubeadm config images pull --config=/root/kubeadm-config.yaml
 
 # Enable services at boot time
 systemctl enable systemd-timesyncd
