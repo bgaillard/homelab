@@ -5,6 +5,7 @@
     name:
       # If a tool is supported by mise, prefer installing it using mise because it allows to always use the latest
       # version.
+      - curl
       - restic
       - sysstat
     state: latest
