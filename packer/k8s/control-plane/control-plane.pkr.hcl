@@ -42,18 +42,10 @@ build {
     source = "file/etc/containerd/config.toml"
     destination = "/etc/containerd/config.toml"
   }
-  # provisioner "file" {
-  #   source = "file/etc/kubernetes/kubelet.conf"
-  #   destination = "/etc/kubernetes/kubelet.conf"
-  # }
   provisioner "file" {
     source = "file/etc/sysctl.d/01-ip-forward.conf"
     destination = "/etc/sysctl.d/01-ip-forward.conf"
   }
-  # provisioner "file" {
-  #   source = "file/etc/systemd/system/kubelet.service.d/20-control-plane-service-manager.conf"
-  #   destination = "/etc/systemd/system/kubelet.service.d/20-control-plane-service-manager.conf"
-  # }
   provisioner "file" {
     source = "file/root/kubeadm-config.yaml"
     destination = "/root/kubeadm-config.yaml"
@@ -63,16 +55,12 @@ build {
     inline = [
       "chown root:root /etc/cni/net.d/20-containerd-net.conflist",
       "chown root:root /etc/containerd/config.toml",
-      # "chown root:root /etc/kubernetes/kubelet.conf",
       "chown root:root /etc/sysctl.d/01-ip-forward.conf",
-      # "chown root:root /etc/systemd/system/kubelet.service.d/20-control-plane-service-manager.conf",
       "chown root:root /root/kubeadm-config.yaml",
 
       "chmod 400 /etc/cni/net.d/20-containerd-net.conflist",
       "chmod 400 /etc/containerd/config.toml",
-      # "chmod 400 /etc/kubernetes/kubelet.conf",
       "chmod 400 /etc/sysctl.d/01-ip-forward.conf",
-      # "chmod 400 /etc/systemd/system/kubelet.service.d/20-control-plane-service-manager.conf",
       "chmod 400 /root/kubeadm-config.yaml"
     ]
   }
