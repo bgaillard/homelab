@@ -44,60 +44,6 @@ resource "incus_instance" "control_plane" {
     #
     #           So we configure 2GB.
     "limits.memory" = "2GB"
-
-    #     "cloud-init.user-data" = join(
-    #       "\n",
-    #       [
-    #         "#cloud-config",
-    #         yamlencode(
-    #           {
-    #             package_update  = true
-    #             package_upgrade = true
-    #             packages = [
-    #               "apt-transport-https",
-    #               "ca-certificates",
-    #               "curl",
-    #               "gpg",
-    #               "containerd"
-    #             ]
-    #             runcmd = [
-    #               "sysctl -w net.ipv4.ip_forward=1",
-    #               "curl -fsSL https://pkgs.k8s.io/core:/stable:/v${var.kubernetes_version}/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg",
-    #               "echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v${var.kubernetes_version}/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list",
-    #               "apt-get update",
-    #               "apt-get install -y kubelet kubeadm kubectl",
-    #               "apt-mark hold kubelet kubeadm kubectl",
-    #               #"systemctl enable --now kubelet",
-    #             ]
-    #             write_files = [
-    #               # @see https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/high-availability/#set-up-the-etcd-cluster
-    #               #{
-    #               #  path = "/etc/kubernetes/pki/etcd/ca.crt",
-    #               #  content = file("${path.module}/etcd/etc/kubernetes/pki/etcd/ca.crt")
-    #               #},
-    #               #{
-    #               #  path = "/etc/kubernetes/pki/apiserver-etcd-client.crt",
-    #               #  content = file("${path.module}/etcd/etc/kubernetes/pki/apiserver-etcd-client.crt")
-    #               #},
-    #               #{
-    #               #  path = "/etc/kubernetes/pki/apiserver-etcd-client.key",
-    #               #  content = file("${path.module}/etcd/etc/kubernetes/pki/apiserver-etcd-client.key")
-    #               #},
-    #               {
-    #                 path    = "/etc/systemd/system/kubelet.service.d/20-etcd-service-manager.conf"
-    #                 content = <<EOT
-    # [Service]
-    # ExecStart=
-    # ExecStart=/usr/bin/kubelet --config=/etc/kubernetes/kubelet.conf
-    # Restart=always
-    # EOT
-    #               }
-    #             ]
-    #           }
-    #         )
-    #       ]
-    #     )
-
   }
 
   provisioner "local-exec" {
