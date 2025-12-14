@@ -1,39 +1,31 @@
-resource "incus_storage_pool" "worker" {
-  project = incus_project.this.name
-  name    = "worker"
-  driver  = "dir"
-}
-
 resource "incus_instance" "worker" {
-  count = 0
+  for_each = var.workers_enabled ? local.workers : {}
 
+  type        = "virtual-machine"
   project     = incus_project.this.name
-  name        = "worker-${count.index + 1}"
-  description = "Worker node ${count.index + 1}"
-
-  # Important, use '/cloud' images to be able to use cloud-init.
-  #
-  # @see https://images.linuxcontainers.org/
-  image = "images:debian/trixie/cloud"
+  name        = each.value.name
+  description = "Worker ${each.value.name}"
+  image       = "bgaillard/worker"
 
   profiles = [
     # Contains a default configuration for the network card and the root disk.
     incus_profile.this.name,
   ]
 
-  # @see https://linuxcontainers.org/incus/docs/main/reference/instance_options/
-  config = {
-    "limits.memory" = "512MB"
-  }
-
   device {
-    name = "root"
-    type = "disk"
+    name = "eth0"
+    type = "nic"
 
     properties = {
-      path = "/"
-      pool = incus_storage_pool.worker.name
-      size = "500MB"
+      nictype        = "bridged"
+      parent         = incus_network.this.name
+      "ipv4.address" = each.value.ipv4_address
     }
+  }
+
+  # @see https://linuxcontainers.org/incus/docs/main/reference/instance_options/
+  config = {
+    "limits.cpu" = "2"
+    "limits.memory" = "2GB"
   }
 }

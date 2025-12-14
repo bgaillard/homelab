@@ -29,7 +29,6 @@ locals {
     }
   }
 
-  load_balancer_vip = "10.0.0.40"
   load_balancers = {
     load_balancer_1 = {
       name         = "load-balancer-1"
@@ -40,4 +39,20 @@ locals {
       ipv4_address = "10.0.0.32"
     }
   }
+
+  workers = {
+    worker_1 = {
+      name         = "worker-1"
+      ipv4_address = "10.0.0.61"
+    }
+    worker_2 = {
+      name         = "worker-2"
+      ipv4_address = "10.0.0.62"
+    }
+    worker_3 = {
+      name         = "worker-3"
+      ipv4_address = "10.0.0.63"
+    }
+  }
+
 }

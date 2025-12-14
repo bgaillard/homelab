@@ -12,6 +12,9 @@ packer-k8s-etcd-build: ## Build K8s Etcd Packer image
 packer-k8s-load-balancer-build: ## Build K8s Load Balancer Packer image
 	@cd packer/k8s/load-balancer && make build
 
+packer-k8s-worker-build: ## Build K8s Worker Packer image
+	@cd packer/k8s/worker && make build
+
 terraform-k8s-apply: ## Plan K8s Terraform
 	@cd terraform/k8s && terraform apply
 

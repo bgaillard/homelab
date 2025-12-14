@@ -16,8 +16,8 @@ variable "load_balancer_enabled" {
   default     = true
 }
 
-variable "kubernetes_version" {
-  description = "The version of Kubernetes to install."
-  type        = string
-  default     = "1.34"
+variable "workers_enabled" {
+  description = "Enable workers deployment."
+  type        = bool
+  default     = true
 }
