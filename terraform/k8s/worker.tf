@@ -25,7 +25,7 @@ resource "incus_instance" "worker" {
 
   # @see https://linuxcontainers.org/incus/docs/main/reference/instance_options/
   config = {
-    "limits.cpu" = "2"
+    "limits.cpu"    = "2"
     "limits.memory" = "2GB"
   }
 }
