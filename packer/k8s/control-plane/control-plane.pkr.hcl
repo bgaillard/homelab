@@ -29,8 +29,8 @@ build {
     inline = [
       "mkdir -p /etc/cni/net.d",
       "mkdir -p /etc/containerd",
-      "mkdir -p /etc/kubernetes",
-      # "mkdir -p /etc/systemd/system/kubelet.service.d"
+      "mkdir -p /etc/kubernetes/pki",
+      "mkdir -p /etc/sysctl.d"
     ]
   }
 
@@ -41,6 +41,10 @@ build {
   provisioner "file" {
     source = "file/etc/containerd/config.toml"
     destination = "/etc/containerd/config.toml"
+  }
+  provisioner "file" {
+    source = "file/etc/kubernetes/pki/static-tokens.csv"
+    destination = "/etc/kubernetes/pki/static-tokens.csv"
   }
   provisioner "file" {
     source = "file/etc/sysctl.d/01-ip-forward.conf"
@@ -55,11 +59,13 @@ build {
     inline = [
       "chown root:root /etc/cni/net.d/20-containerd-net.conflist",
       "chown root:root /etc/containerd/config.toml",
+      "chown root:root /etc/kubernetes/pki/static-tokens.csv",
       "chown root:root /etc/sysctl.d/01-ip-forward.conf",
       "chown root:root /root/kubeadm-config.yaml",
 
       "chmod 400 /etc/cni/net.d/20-containerd-net.conflist",
       "chmod 400 /etc/containerd/config.toml",
+      "chmod 400 /etc/kubernetes/pki/static-tokens.csv",
       "chmod 400 /etc/sysctl.d/01-ip-forward.conf",
       "chmod 400 /root/kubeadm-config.yaml"
     ]
