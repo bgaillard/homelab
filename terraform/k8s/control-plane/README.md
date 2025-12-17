@@ -10,6 +10,11 @@ To do it just execute the `init.sh` script on the `control-plane-1` node.
 ./init.sh
 ```
 
+## Create `~/.kube/config` file for users
+
+Execute the `generate-kube-config.sh` script.
+
+
 ## Replace a Control Plane Node
 
 Here is a sample to replace the Control plane node `control-plane-3`.
