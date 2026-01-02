@@ -14,6 +14,10 @@ To do it just execute the `init.sh` script on the `control-plane-1` node.
 
 Execute the `generate-kube-config.sh` script.
 
+## Add `baptiste` as Kubernetes admin user
+
+Copy the `clusterrolebinding.yaml` file to `control-plane-1` and apply it.
+
 
 ## Replace a Control Plane Node
 

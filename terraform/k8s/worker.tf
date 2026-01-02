@@ -28,4 +28,8 @@ resource "incus_instance" "worker" {
     "limits.cpu"    = "2"
     "limits.memory" = "2GB"
   }
+
+  provisioner "local-exec" {
+    command = "${path.module}/worker/start.sh ${each.value.name}"
+  }
 }

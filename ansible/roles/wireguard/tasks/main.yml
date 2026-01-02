@@ -1,0 +1,85 @@
+---
+# @see https://docs.pivpn.io/
+# @see https://wiki.archlinux.org/title/WireGuard
+
+- name: Update apt cache
+  become: true
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Upgrade all apt packages
+  become: true
+  ansible.builtin.apt:
+    upgrade: dist
+
+- name: Install 'wireguard' Linux package
+  become: true
+  ansible.builtin.package:
+    name:
+      - wireguard
+    state: latest
+
+- name: Create the '/etc/wireguard' directory if it does not exist
+  become: true
+  ansible.builtin.file:
+    path: "/etc/wireguard"
+    state: directory
+    mode: '0700'
+
+- name: Render the '/etc/wireguard/wg0.conf' configuration file
+  become: true
+  ansible.builtin.template:
+    src: etc/wireguard/wg0.conf.j2
+    dest: "/etc/wireguard/wg0.conf"
+    mode: u=r
+  vars:
+    # Interface
+    listen_port: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='wireguardPort') | first }}"
+    private_key: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='wireguardPrivateKey') | first }}"
+    public_key: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='wireguardPublicKey') | first }}"
+
+    # XPS-13 (i.e. 'xps-13') Peer
+    xps_13_public_key: "{{ lookup('community.general.bitwarden', 'e735dca9-5493-435c-a71f-b39200ad4e0b', search='id', field='wireguardPublicKey') | first }}"
+    xps_13_allowed_ips: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='wireguardIPAddress') | first }}/24"
+    xps_13_persistent_keepalive: 25
+
+# See 'man ip-link' (i.e. 'ip-link(8)') for more information about 'ip link show'
+- name: Check if the Wireguard 'wg0' interface exists
+  ansible.builtin.command: ip link show wg0 type wireguard
+  changed_when: false
+  failed_when: wg0_exists.rc not in [0, 1]
+  register: wg0_exists
+
+# See 'man ip-link' (i.e. 'ip-link(8)') for more information about 'ip link add'
+- name: Create the Wireguard 'wg0' interface if it does not exist
+  become: true
+  ansible.builtin.command: ip link add dev wg0 type wireguard
+  when: wg0_exists.rc != 0
+
+# See 'man ip-address' (i.e. 'ip-address(8)') for more information about 'ip address show'
+- name: Check if the if the IP address of the Wireguard 'wg0' interface is 
+  ansible.builtin.command: bash -c "ip address show dev wg0 | grep '172.16.0.1/24'"
+  changed_when: false
+  failed_when: wg0_address_configured.rc not in [0, 1]
+  register: wg0_address_configured
+
+# See 'man ip-address' (i.e. 'ip-address(8)') for more information about 'ip address add'
+- name: Configure the IP address of the Wireguard 'wg0' interface if not configured
+  become: true
+  ansible.builtin.command: ip address add dev wg0 172.16.0.1/24
+  when: wg0_address_configured.rc != 0
+
+- name: Configure the Wireguard interface 'wg0' with the '/etc/wireguard/wg0.conf' file
+  become: true
+  ansible.builtin.command: wg setconf wg0 /etc/wireguard/wg0.conf
+
+- name: Check if the Wireguard interface 'wg0' is up
+  ansible.builtin.command: bash -c "ip link show dev wg0 | grep 'state UP'"
+  changed_when: false
+  failed_when: wg0_is_up.rc not in [0, 1]
+  register: wg0_is_up
+
+- name: Enable the Wireguard interface 'wg0' if it is down
+  become: true
+  ansible.builtin.command: ip link set dev wg0 up
+  when: wg0_is_up.rc != 0

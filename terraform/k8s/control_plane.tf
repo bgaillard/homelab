@@ -47,6 +47,6 @@ resource "incus_instance" "control_plane" {
   }
 
   provisioner "local-exec" {
-    command = "${path.module}/control-plane/copy.sh ${each.value.name}"
+    command = "${path.module}/control-plane/start.sh ${each.value.name}"
   }
 }

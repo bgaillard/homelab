@@ -1,0 +1,13 @@
+# See 'man wg' for details about the format of this file
+
+[Interface]
+ListenPort = {{ listen_port }}
+PrivateKey = {{ private_key }}
+# PublicKey = {{ public_key }}
+
+
+# XPS-13 (i.e. 'xps-13') Peer
+[Peer]
+PublicKey = {{ xps_13_public_key }}
+AllowedIPs = {{ xps_13_allowed_ips }}
+PersistentKeepalive = {{ xps_13_persistent_keepalive }}

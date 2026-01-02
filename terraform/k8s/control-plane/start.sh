@@ -25,3 +25,7 @@ incus file push --project "${project}" --create-dirs --uid 0 --gid 0 \
 incus file push --project "${project}" --create-dirs --uid 0 --gid 0 \
   "${CURRENT_DIR}/../etcd/etcd-1/etc/kubernetes/pki/apiserver-etcd-client.key" \
   "homelab:${instance}/etc/kubernetes/pki/apiserver-etcd-client.key"
+
+# Update the CNI configuration to use the correct Pods CIDR
+incus exec --project "${project}" "homelab:${instance}" -- bash -c "sed -i 's/10.42.0.0/10.42.${instance##*-}.0/g' /etc/cni/net.d/20-containerd-net.conflist"
+incus exec --project "${project}" "homelab:${instance}" -- bash -c "systemctl restart containerd"

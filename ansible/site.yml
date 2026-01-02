@@ -5,3 +5,6 @@
     - incus
     - packages
     - restic
+- hosts: pi-3
+  roles:
+    - wireguard

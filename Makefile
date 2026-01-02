@@ -23,6 +23,12 @@ terraform-k8s-apply: ## Plan K8s Terraform
 terraform-k8s-fmt: ## Format K8s Terraform code
 	@cd terraform/k8s && terraform fmt -recursive .
 
+terraform-k8s-helm-apply: ## Apply K8s Helm Terraform
+	@cd terraform/k8s/helm && terraform apply
+
+terraform-k8s-helm-init: ## Initialize K8s Helm Terraform
+	@cd terraform/k8s/helm && terraform init
+
 terraform-k8s-init: ## Initialize K8s Terraform
 	@cd terraform/k8s && terraform init
 

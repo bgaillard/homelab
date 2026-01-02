@@ -3,6 +3,7 @@
 * https://kubernetes.io/docs/reference/setup-tools/kubeadm/
 * https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/
 * https://kubernetes.io/docs/reference/networking/ports-and-protocols/
+* https://github.com/kelseyhightower/kubernetes-the-hard-way
 
 ## SFR Box route table
 

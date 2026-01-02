@@ -30,6 +30,7 @@ build {
       "mkdir -p /etc/cni/net.d",
       "mkdir -p /etc/containerd",
       "mkdir -p /etc/kubernetes",
+      "mkdir -p /etc/systemd/network/enp5s0.network.d"
     ]
   }
 
@@ -67,6 +68,39 @@ build {
   provisioner "shell" {
     scripts = [
       "shell/install.sh"
+    ]
+  }
+
+  # FIXME: We are forced to place those files here otherwise the DNS resolution do not work during the install.sh 
+  #        execution
+  provisioner "file" {
+    source = "file/etc/systemd/network/enp5s0.network.d/control-plane-1.conf"
+    destination = "/etc/systemd/network/enp5s0.network.d/control-plane-1.conf"
+  }
+  provisioner "file" {
+    source = "file/etc/systemd/network/enp5s0.network.d/control-plane-2.conf"
+    destination = "/etc/systemd/network/enp5s0.network.d/control-plane-2.conf"
+  }
+  provisioner "file" {
+    source = "file/etc/systemd/network/enp5s0.network.d/control-plane-3.conf"
+    destination = "/etc/systemd/network/enp5s0.network.d/control-plane-3.conf"
+  }
+  provisioner "file" {
+    source = "file/etc/systemd/network/enp5s0.network.d/worker-1.conf"
+    destination = "/etc/systemd/network/enp5s0.network.d/worker-1.conf"
+  }
+  provisioner "file" {
+    source = "file/etc/systemd/network/enp5s0.network.d/worker-2.conf"
+    destination = "/etc/systemd/network/enp5s0.network.d/worker-2.conf"
+  }
+  provisioner "file" {
+    source = "file/etc/systemd/network/enp5s0.network.d/worker-3.conf"
+    destination = "/etc/systemd/network/enp5s0.network.d/worker-3.conf"
+  }
+  provisioner "shell" {
+    inline = [
+      "chown -R root:root /etc/systemd/network",
+      "chmod 444 /etc/systemd/network/enp5s0.network.d/*.conf",
     ]
   }
 }

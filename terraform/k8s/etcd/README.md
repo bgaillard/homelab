@@ -78,13 +78,17 @@ openssl x509 -in /etc/kubernetes/pki/etcd/ca.crt -noout -text
 ```
 
 
+## Replace a failed etcd node
+
+
+
 ## Backup
 
 
 
 ## TODO
 
-* [ ] Understand an adapt the CNI plugin configuration 
+* [ ] Understand an adapt the CNI plugin configuration
 * [ ] Manage backups of the etcd data regularly
 * [ ] Configure monitoring of the etcd cluster (Prometheus + Grafana + Alertmanager)
 * [ ] Pass the Kubernetes Conformance tests (see [Introducing Software Certification for Kubernetes](https://kubernetes.io/blog/2017/10/software-conformance-certification/))

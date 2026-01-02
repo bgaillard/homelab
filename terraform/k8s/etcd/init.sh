@@ -21,7 +21,7 @@ incus file push --project k8s --recursive --create-dirs "${CURRENT_DIR}"/etcd-1/
 for i in 1 2 3; do
 
   # Execute the init script
-  incus exec --project k8s homelab:etcd-${i} -- /tmp/init.sh
+  incus exec --project k8s homelab:etcd-${i} -- /root/init.sh
 
   # Pull the generated certificates to backup them locally
   incus file pull --project k8s homelab:etcd-${i}/etc/kubernetes/pki/apiserver-etcd-client.crt "${CURRENT_DIR}"/etcd-${i}/etc/kubernetes/pki
