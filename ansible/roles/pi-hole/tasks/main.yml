@@ -1,0 +1,12 @@
+---
+# TODO: We should be able to completely reinstall the pi-hole with it's whole configuration
+#- name: Install pi-hole
+#  become: true
+#  ansible.builtin.shell: "curl -sSL https://install.pi-hole.net | bash"
+
+# TODO: We should be able to use 'pi.hole' as the hostname in URLs
+
+#- name: Configure DNS upstreams
+#  ansible.builtin.uri:
+#    url: http://pi-3/api/config?restart=true
+#    method: PATCH

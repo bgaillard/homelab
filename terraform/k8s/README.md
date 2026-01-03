@@ -20,4 +20,39 @@ The following route table entry has been added to the SFR Box route to forward t
 
 ## TODO
 
-* [ ] Manage authentication using OpenID Connect or something similar
+* [ ] General
+    * [ ] Create graphical schema to explain the architecture
+    * [ ] Setup a DNS name for the cluster API server
+    * [ ] Write procedures to upgrade the cluster
+* [ ] Monitoring
+    * [ ] Setup kubernetes-dashboard
+* [ ] Ingresses
+    * [ ] Setup a sample NGINX Ingress Controller
+    * [ ] Setup a sample Traefik Ingress Controller
+    * [ ] Setup a sample HAProxy Ingress Controller
+    * [ ] Setup a sample Pomerium Ingress Controller
+    * [ ] Setup a sample Envoy Ingress Controller
+    * [ ] Setup a sample Istio Ingress Gateway
+    * [ ] Setup a sample Kong Ingress Controller
+    * [ ] Setup a sample Gravitee Ingress Controller
+    * [ ] Setup a sample Contour Ingress Controller
+* [ ] Security
+    * [ ] Setup Cert-Manager
+    * [ ] Setup PSS
+    * [ ] Setup OPA Gatekeeper
+    * [ ] Setup Kyverno
+    * [ ] See how to provide a sample based on Talos
+* [ ] Etcd
+    * [ ] Setup a sample for etcd without the Kubelet and without static pods
+    * [ ] Setup a sample with etcd deployed in the same node as the Control plane nodes
+* [ ] Setup a sample for each authentication mechanism
+    * [ ] OpenID Connect
+* [ ] Setup a sample for each well known CNI (see https://www.devopsschool.com/blog/list-of-cni-plugins-used-in-kubernetes/)
+    * [ ] Flannel
+    * [ ] Calico
+    * [ ] Weave
+    * [ ] Cilium
+    * [ ] Kube-Router
+    * [ ] Romana
+    * [ ] Antrea
+    * [ ] Multus 

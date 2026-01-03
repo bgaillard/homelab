@@ -1,0 +1,10 @@
+[Unit]
+Description=Disable Wi-Fi interface using rfkill
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/rfkill block wifi
+
+[Install]
+WantedBy=multi-user.target

@@ -7,4 +7,6 @@
     - restic
 - hosts: pi-3
   roles:
+    - pi-3
+    - pi-hole
     - wireguard
