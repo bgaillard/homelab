@@ -1,0 +1,8 @@
+---
+- name: PATCH /config
+  ansible.builtin.uri:
+    url: http://pi-3/api/config?restart=true&sid={{ auth.json.session.sid }}
+    method: PATCH
+    body_format: json
+    body: "{{ item }}"
+  loop: "{{ pi_hole_configuration.patch }}"

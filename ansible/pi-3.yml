@@ -1,0 +1,56 @@
+---
+- hosts: pi-3
+  roles:
+    - role: pi-3
+      vars:
+        # Servers backup there are into the /src/backups/ directory which mounts a Samba share.
+        backups_smb_server: "{{ lookup('community.general.bitwarden', 'c4e3f1e4-ac82-4571-aa0c-abd0013ee884', search='id', field='ipAddress') | first }}"
+        backups_smb_share: "{{ lookup('community.general.bitwarden', 'c4e3f1e4-ac82-4571-aa0c-abd0013ee884', search='id', field='smbShare') | first }}"
+        backups_smb_username: "{{ lookup('community.general.bitwarden', 'c4e3f1e4-ac82-4571-aa0c-abd0013ee884', search='id', field='smbUsername') | first }}"
+        backups_smb_password: "{{ lookup('community.general.bitwarden', 'c4e3f1e4-ac82-4571-aa0c-abd0013ee884', search='id', field='smbPassword') | first }}"
+        backups_smb_version: "{{ lookup('community.general.bitwarden', 'c4e3f1e4-ac82-4571-aa0c-abd0013ee884', search='id', field='smbVersion') | first }}"
+
+        swiss_backup_location: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupLocation') | first }}" 
+        swiss_backup_region: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupRegion') | first }}"
+        swiss_backup_project_name: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupProjectName') | first }}"
+        swiss_backup_password: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupPassword') | first }}"
+        swiss_backup_user_name: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupUserName') | first }}"
+        restic_password: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='resticPassword') | first }}"
+    - role: pi-hole
+      vars:
+        authentication:
+          # @see https://docs.pi-hole.net/api/auth/
+          post:
+            password: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='piholePassword') | first }}" 
+        domain_management:
+          # @see https://docs.pi-hole.net/regex/tutorial/
+          put:
+            - id: 1
+              type: "deny"
+              kind: "regex"
+              domain: "^.*[\\.]?smartadserver\\.com$"
+              comment: "Equativ (formerly Smart AdServer)"
+              enabled: true
+              groups:
+                - 0
+        list_management:
+          # @see https://www.reddit.com/r/pihole/comments/1hy05nx/best_simple_adlist_now_we_are_in_2025/
+          put:
+            # @see https://github.com/StevenBlack/hosts
+            - id: 1
+              address: "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
+              comment: "StevenBlack"
+              enabled: true
+              type: "block"
+              groups:
+                - 0
+
+            # @see https://github.com/hagezi/dns-blocklists
+            - id: 2
+              address: "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/ultimate.txt"
+              comment: "hagezi - Multi ULTIMATE"
+              enabled: true
+              type: "block"
+              groups:
+                - 0
+    - wireguard

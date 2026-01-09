@@ -1,0 +1,13 @@
+---
+- name: PUT /lists/{list}
+  ansible.builtin.uri:
+    url: http://pi-3/api/lists/{{ item.address | urlencode }}?type=block&sid={{ auth.json.session.sid }}
+    method: PUT
+    body_format: json
+    body:
+      id: "{{ item.id }}"
+      comment: "{{ item.comment }}"
+      enabled: "{{ item.enabled }}"
+      type: "{{ item.type }}"
+      groups: "{{ item.groups }}"
+  loop: "{{ list_management.put }}"

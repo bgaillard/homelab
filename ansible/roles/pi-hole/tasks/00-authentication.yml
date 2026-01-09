@@ -1,0 +1,12 @@
+---
+# @see https://docs.pi-hole.net/api/auth/
+- name: POST /auth
+  ansible.builtin.uri:
+    url: http://pi-3/api/auth
+    method: POST
+    body_format: json
+    body:
+      password: "{{ authentication.post.password }}"
+    return_content: true
+  failed_when: auth.status != 200 or 'error' in auth.json
+  register: auth

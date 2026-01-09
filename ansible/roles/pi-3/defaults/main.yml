@@ -1,0 +1,16 @@
+---
+
+# Servers backup there are into the /src/backups/ directory which mounts a Samba share.
+backups_smb_server: "0.0.0.0"
+backups_smb_share: "SambaShare"
+backups_smb_username: "SambaUser"
+backups_smb_password: "SambaPassword"
+backups_smb_version: "SambaVersion"
+
+
+swiss_backup_location: "location"
+swiss_backup_region: "region"
+swiss_backup_project_name: "project_name"
+swiss_backup_password: "password"
+swiss_backup_user_name: "username"
+restic_password: "restic_password"

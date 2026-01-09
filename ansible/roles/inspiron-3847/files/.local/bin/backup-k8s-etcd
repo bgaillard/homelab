@@ -9,8 +9,6 @@ ETCD_NODE_HOSTNAME="etcd-1"
 ETCD_NODE_IP="10.0.0.11"
 ETCD_SNAPSHOT_FILE="etcd-snapshot-$(date +'%Y-%m-%d_%Hh%M').db"
 
-RESTIC=/home/baptiste/.local/bin/restic-k8s-etcd
-
 # Create the snapshot on the etcd-1 node
 incus exec --project "${INCUS_PROJECT}" "${ETCD_NODE_HOSTNAME}" -- /usr/bin/etcdctl snapshot save \
   --cert /etc/kubernetes/pki/etcd/peer.crt \
@@ -26,11 +24,5 @@ incus file pull --project ${INCUS_PROJECT} --recursive --create-dirs \
 # Ensure we never have more than 7 snapshots
 find "${BACKUPS_DIR}" -type f -name "etcd-snapshot-*.db" -printf '%T+ %p\n' | sort | head -n -7 | awk '{print $2}' | xargs -I {} rm {}
 
-# Backup the snapshot with restic
-${RESTIC} backup "${BACKUP_DIR}"
-
 # Remove the snapshot from the homelab server
 incus exec --project "${INCUS_PROJECT}" "${ETCD_NODE_HOSTNAME}" -- rm "/tmp/${ETCD_SNAPSHOT_FILE}"
-
-# Keep the last 7 backups in restic
-${RESTIC} forget --keep-last 7 --prune

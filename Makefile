@@ -1,7 +1,13 @@
 SHELL := /bin/bash
 
-ansible-playbook: ## Run Ansible playbook
+ansible: ## Run Ansible playbook
 	@ansible-playbook --inventory ansible/hosts.yml ansible/site.yml
+
+ansible-inspiron-3847: ## Run Ansible playbook only for the Inspiron 3847
+	@ansible-playbook --inventory ansible/hosts.yml --limit inspiron-3847 ansible/site.yml
+
+ansible-pi-3: ## Run Ansible playbook playbook only for the Raspberry Pi 3
+	@ansible-playbook --inventory ansible/hosts.yml --limit pi-3 ansible/site.yml
 
 .PHONY: ansible-playbook
 

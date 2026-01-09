@@ -1,3 +1,0 @@
----
-- import_tasks: 00-poweroff.yml
-- import_tasks: 10-backup-k8s-etcd.yml

@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ -z "${BUCKET_NAME}" ]; then
+  echo "Error: BUCKET_NAME environment variable is not set!"
+  exit 1
+fi
+
 # @see https://docs.infomaniak.cloud/block_storage/swissbackup/
 
 export OS_AUTH_URL="{{ swiss_backup_location }}/identity/v3"
@@ -9,12 +14,8 @@ export OS_PASSWORD="{{ swiss_backup_password }}"
 export OS_USER_DOMAIN_NAME=default
 export OS_USERNAME="{{ swiss_backup_user_name }}"
 export OS_PROJECT_DOMAIN_NAME=default
-export RESTIC_REPOSITORY="swift:{{ swiss_backup_project_name }}:/k8s-etcd"
+export RESTIC_REPOSITORY="swift:{{ swiss_backup_project_name }}:/${BUCKET_NAME}"
 export RESTIC_PASSWORD="{{ restic_password }}"
 
-# The restic repository has been manually initialized with the following command:
-#
-#   restic-k8s-etcd -r swift:{{ swiss_backup_project_name }}:/k8s-etcd init
-#
 
 restic "$@"

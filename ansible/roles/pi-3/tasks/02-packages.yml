@@ -1,0 +1,9 @@
+---
+- name: Install Linux packages
+  become: true
+  ansible.builtin.package:
+    name:
+      - cifs-utils
+      - logrotate
+      - restic
+    state: latest

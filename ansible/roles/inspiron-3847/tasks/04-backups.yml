@@ -12,11 +12,20 @@
     mode: u=rx
     force: true
 
+- name: Create the '/var/log/backup-k8s-etcd/' directory if it does not exist
+  become: true
+  ansible.builtin.file:
+    path: "/var/log/backup-k8s-etcd/"
+    state: directory
+    owner: "{{ ansible_facts['env']['USER'] }}"
+    group: "{{ ansible_facts['env']['USER'] }}"
+    mode: '0700'
+
 - name: Configure etcd backup cron job
   become: true
   ansible.builtin.cron:
     name: "Backup the Kubernetes etcd database"
-    job: "{{ ansible_facts['env']['HOME'] }}/.local/bin/backup-k8s-etcd >> {{ ansible_facts['env']['HOME'] }}/.local/bin/backup-k8s-etcd.log 2>&1"
+    job: "{{ ansible_facts['env']['HOME'] }}/.local/bin/backup-k8s-etcd >> /var/log/backup-k8s-etcd/backup-k8s-etcd.log 2>&1"
     state: present
     user: "{{ ansible_facts['env']['USER'] }}"
     minute: "0"

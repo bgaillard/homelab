@@ -1,0 +1,7 @@
+---
+- name: POST /dns/blocking
+  ansible.builtin.uri:
+    url: http://pi-3/api/dns/blocking?sid={{ auth.json.session.sid }}
+    method: POST
+    body_format: json
+    body: "{{ dns_control.post }}"

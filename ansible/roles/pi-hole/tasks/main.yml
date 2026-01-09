@@ -1,12 +1,42 @@
 ---
+# The bellow import task group instructions are grouped by "sections" of the Pi-hole API documentation page.
+#
+# @see https://pi.hole/api/docs
+
+# Authentication
+- import_tasks: 00-authentication.yml
+
+# DNS Control
+- import_tasks: 01-dns-control.yml
+
+# Group Management
+- import_tasks: 02-group-management.yml
+
+# Client Management
+- import_tasks: 03-client-management.yml
+
+# List Management
+- import_tasks: 04-list-management.yml
+
+# Domain Management
+- import_tasks: 05-domain-management.yml
+
+# FTL information
+- import_tasks: 06-ftl-information.yml
+
+# Network information
+- import_tasks: 07-network-information.yml
+
+# Pi-hole Configuration
+- import_tasks: 08-pi-hole-configuration.yml
+
+# DHCP
+- import_tasks: 09-dhcp.yml
+
+#- import_tasks: 01-config-dns.yml
+#- import_tasks: 02-config-dhcp.yml
+
 # TODO: We should be able to completely reinstall the pi-hole with it's whole configuration
 #- name: Install pi-hole
 #  become: true
 #  ansible.builtin.shell: "curl -sSL https://install.pi-hole.net | bash"
-
-# TODO: We should be able to use 'pi.hole' as the hostname in URLs
-
-#- name: Configure DNS upstreams
-#  ansible.builtin.uri:
-#    url: http://pi-3/api/config?restart=true
-#    method: PATCH

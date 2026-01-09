@@ -1,0 +1,14 @@
+---
+- name: PUT /domains/{type}/{kind}/{domain}
+  ansible.builtin.uri:
+    url: http://pi-3/api/domains/{{ item.type }}/{{ item.kind }}/{{ item.domain | urlencode }}?sid={{ auth.json.session.sid }}
+    method: PUT
+    body_format: json
+    body:
+      id: "{{ item.id }}"
+      type: "{{ item.type }}"
+      kind: "{{ item.kind }}"
+      comment: "{{ item.comment }}"
+      enabled: "{{ item.enabled }}"
+      groups: "{{ item.groups }}"
+  loop: "{{ domain_management.put }}"

@@ -1,12 +1,3 @@
 ---
-- hosts: homelab
-  roles:
-    - cron
-    - incus
-    - packages
-    - restic
-- hosts: pi-3
-  roles:
-    - pi-3
-    - pi-hole
-    - wireguard
+- import_playbook: inspiron-3847.yml
+- import_playbook: pi-3.yml
