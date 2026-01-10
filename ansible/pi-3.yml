@@ -1,5 +1,9 @@
 ---
 - hosts: pi-3
+  tasks:
+    - name: TEST
+      ansible.builtin.debug:
+        msg: "{{ lookup('bitwarden_attachment', item_id='7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', attachment='pi_hole_configuration.yml') | to_json }}"
   roles:
     - role: pi-3
       vars:
@@ -53,4 +57,7 @@
               type: "block"
               groups:
                 - 0
-    - wireguard
+        pi_hole_configuration:
+          patch:
+            - "{{ lookup('bitwarden_attachment', item_id='7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', attachment='pi_hole_configuration.yml') | to_json }}"
+    #- wireguard
