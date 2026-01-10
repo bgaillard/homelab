@@ -2,5 +2,4 @@
 - hosts: inspiron-3847
   roles:
     - incus
-    - packages
     - inspiron-3847

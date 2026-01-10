@@ -3,5 +3,7 @@
   become: true
   ansible.builtin.package:
     name:
+      - curl
       - logrotate
+      - sysstat
     state: latest

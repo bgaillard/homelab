@@ -21,6 +21,14 @@
           # Get the attachment content
           ATTACHMENT=$(bw get attachment pi_hole_configuration.yml --itemid 7f9fe70f-a0f4-45c2-b062-b3c50170d4c0 --output /dev/stdout)
 
+          # If the attachment does not contain "Saved /dev/stdout", exit with error
+          if ! echo "${ATTACHMENT}" | grep -q "Saved /dev/stdout"; then
+              echo "Error: Could not retrieve the attachment 'pi_hole_configuration.yml' from Bitwarden."
+              echo "Result of the 'bw get attachment' command:"
+              echo "${ATTACHMENT}"
+              exit 1
+          fi
+
           # Remove the last line which contains only "Saved /dev/stdout"
           echo "$ATTACHMENT" | head -n -1
       delegate_to: localhost
