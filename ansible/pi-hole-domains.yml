@@ -1,0 +1,11 @@
+---
+# @see https://docs.pi-hole.net/regex/tutorial/
+pi_hole_domains:
+  - id: 1
+    type: "deny"
+    kind: "regex"
+    domain: "^.*[\\.]?smartadserver\\.com$"
+    comment: "Equativ (formerly Smart AdServer)"
+    enabled: true
+    groups:
+      - 0

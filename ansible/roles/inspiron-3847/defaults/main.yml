@@ -1,5 +1,7 @@
 ---
-# Servers backup there are into the /src/backups/ directory which mounts a Samba share.
+# Server store their backups into the /src/backups/ directory which mounts a Samba share.
+#
+# The Samba share is then backed up to an off-site location using Restic.
 backups_smb_server: "0.0.0.0"
 backups_smb_share: "SambaShare"
 backups_smb_username: "SambaUser"

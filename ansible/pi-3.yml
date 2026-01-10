@@ -1,5 +1,8 @@
 ---
 - hosts: pi-3
+  vars_files:
+    - pi-hole-domains.yml
+    - pi-hole-lists.yml
   tasks:
     - name: Gets the pi_hole_configuration attachment from Bitwarden
       ansible.builtin.shell:
@@ -32,40 +35,12 @@
           post:
             password: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='piholePassword') | first }}" 
         domain_management:
-         # @see https://docs.pi-hole.net/regex/tutorial/
-         put:
-           - id: 1
-             type: "deny"
-             kind: "regex"
-             domain: "^.*[\\.]?smartadserver\\.com$"
-             comment: "Equativ (formerly Smart AdServer)"
-             enabled: true
-             groups:
-               - 0
+          put: "{{ pi_hole_domains }}"
         list_management:
-         # @see https://www.reddit.com/r/pihole/comments/1hy05nx/best_simple_adlist_now_we_are_in_2025/
-         put:
-           # @see https://github.com/StevenBlack/hosts
-           - id: 1
-             address: "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
-             comment: "StevenBlack"
-             enabled: true
-             type: "block"
-             groups:
-               - 0
-
-           # @see https://github.com/hagezi/dns-blocklists
-           - id: 2
-             address: "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/ultimate.txt"
-             comment: "hagezi - Multi ULTIMATE"
-             enabled: true
-             type: "block"
-             groups:
-               - 0
+          put: "{{ pi_hole_lists }}"
         pi_hole_configuration:
-          patch:
-            - "{{ pi_hole_configuration_result.stdout | from_yaml | to_json }}"
-          
+          patch: [ "{{ pi_hole_configuration_result.stdout | from_yaml | to_json }}" ]
+
   roles:
     - role: pi-3
       vars:
