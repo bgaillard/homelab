@@ -1,0 +1,7 @@
+---
+# Servers backup there are into the /src/backups/ directory which mounts a Samba share.
+backups_smb_server: "{{ lookup('community.general.bitwarden', 'c4e3f1e4-ac82-4571-aa0c-abd0013ee884', search='id', field='ipAddress') | first }}"
+backups_smb_share: "{{ lookup('community.general.bitwarden', 'c4e3f1e4-ac82-4571-aa0c-abd0013ee884', search='id', field='smbShare') | first }}"
+backups_smb_username: "{{ lookup('community.general.bitwarden', 'c4e3f1e4-ac82-4571-aa0c-abd0013ee884', search='id', field='smbUsername') | first }}"
+backups_smb_password: "{{ lookup('community.general.bitwarden', 'c4e3f1e4-ac82-4571-aa0c-abd0013ee884', search='id', field='smbPassword') | first }}"
+backups_smb_version: "{{ lookup('community.general.bitwarden', 'c4e3f1e4-ac82-4571-aa0c-abd0013ee884', search='id', field='smbVersion') | first }}"
