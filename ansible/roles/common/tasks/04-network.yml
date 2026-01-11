@@ -6,6 +6,17 @@
 # @see https://raspberrytips.fr
 # @see https://raspberrytips.fr/desactiver-wifi-raspberry-pi/
 
+# Check if netplan is installed
+- name: Check if netplan is installed
+  ansible.builtin.stat:
+    path: /etc/netplan
+  register: netplan_installed
+
+
+########################################################################################################################
+# Ethernet interface managed with netplan
+########################################################################################################################
+
 # The initial Rasberry Pi OS install created files names '90-NM-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.yaml' in the 
 # '/etc/netplan/' directory to configure the network interfaces using NetworkManager or systemd-networkd as renderer.
 #
@@ -13,6 +24,7 @@
 - name: Delete previously generated netplan config files
   become: true
   ansible.builtin.shell: rm -f 90-NM-*.yaml
+  when: netplan_installed.stat.exists and netplan_installed.stat.isdir
 
 # Warning, after 'netplan apply' this file is renamed into '90-NM-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.yaml'
 - name: Create an '/etc/netplan/10-eth0.yaml' file to configure a static IP address for the 'eth0' interface
@@ -28,50 +40,20 @@
     gateway: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='gateway') | first }}"
     dns_1: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='dns1') | first }}"
     dns_2: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='dns2') | first }}"
+  when: netplan_installed.stat.exists and netplan_installed.stat.isdir
 
 - name: Apply the netplan configuration
   become: true
   ansible.builtin.command: netplan apply
+  when: netplan_installed.stat.exists and netplan_installed.stat.isdir
 
-# ModemManager manages mobile broadband (2G/3G/4G) connections
-- name: Disable the 'ModemManager' service
-  become: true
-  ansible.builtin.systemd:
-    name: ModemManager
-    enabled: false
-    masked: true
-    state: stopped
 
-- name: Disable the 'bluetooth' service
-  become: true
-  ansible.builtin.systemd:
-    name: bluetooth
-    enabled: false
-    masked: true
-    state: stopped
+########################################################################################################################
+# Ethernet interface managed with /etc/network/interfaces
+#
+# @see https://manpages.debian.org/trixie/ifupdown-ng-compat/interfaces.5.en.html
+########################################################################################################################
 
-# WPA Supplicant manages Wi-Fi client connections, it requires a Wi-Fi network interface to be enable to work. We 
-# disable WPA Supplicant before deactivation the associated Wi-Fi / WLAN interface.
-- name: Disable the 'wpa_supplicant' (Wi-Fi Protected Access client) service
-  become: true
-  ansible.builtin.systemd:
-    name: wpa_supplicant
-    enabled: false
-    masked: true
-    state: stopped
-
-- name: Create an '/etc/systemd/system/disable-wifi.service' service file to disable the Wi-Fi interface on boot
-  become: true
-  ansible.builtin.copy:
-    src: etc/systemd/system/disable-wifi.service
-    dest: /etc/systemd/system/disable-wifi.service
-    owner: root
-    group: root
-    mode: 644
-
-- name: Enable the 'disable-wifi.service' systemd service to disable the Wi-Fi interface now
-  become: true
-  ansible.builtin.systemd:
-    name: disable-wifi.service
-    enabled: true
-    state: started
+# TODO: It would definitely be better to manage everything with a custom built template
+#
+# @see https://gist.github.com/analytically/5760207

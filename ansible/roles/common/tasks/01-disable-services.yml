@@ -1,0 +1,9 @@
+---
+- name: Disable not useful services
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: false
+    masked: true
+    state: stopped
+  loop: "{{ disabled_services }}"

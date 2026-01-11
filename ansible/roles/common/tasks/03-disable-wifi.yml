@@ -1,0 +1,16 @@
+---
+- name: Create an '/etc/systemd/system/disable-wifi.service' service file to disable the Wi-Fi interface on boot
+  become: true
+  ansible.builtin.copy:
+    src: etc/systemd/system/disable-wifi.service
+    dest: /etc/systemd/system/disable-wifi.service
+    owner: root
+    group: root
+    mode: 644
+
+- name: Enable the 'disable-wifi.service' systemd service to disable the Wi-Fi interface now
+  become: true
+  ansible.builtin.systemd:
+    name: disable-wifi.service
+    enabled: true
+    state: started

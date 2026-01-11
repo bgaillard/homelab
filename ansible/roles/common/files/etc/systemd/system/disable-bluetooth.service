@@ -1,0 +1,10 @@
+[Unit]
+Description=Disable Bluetooth interface using rfkill
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/rfkill block bluetooth
+
+[Install]
+WantedBy=multi-user.target

@@ -1,5 +1,11 @@
 ---
 - hosts: inspiron-3847
   roles:
+    - role: common
+      vars:
+        disabled_services:
+          - bluetooth
+          - cups
+          - wpa_supplicant
     - incus
     - inspiron-3847

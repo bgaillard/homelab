@@ -1,0 +1,16 @@
+---
+- name: Create an '/etc/systemd/system/disable-bluetooth.service' service file to disable the Bluetooth interface on boot
+  become: true
+  ansible.builtin.copy:
+    src: etc/systemd/system/disable-bluetooth.service
+    dest: /etc/systemd/system/disable-bluetooth.service
+    owner: root
+    group: root
+    mode: 644
+
+- name: Enable the 'disable-bluetooth.service' systemd service to disable the Bluetooth interface now
+  become: true
+  ansible.builtin.systemd:
+    name: disable-bluetooth.service
+    enabled: true
+    state: started

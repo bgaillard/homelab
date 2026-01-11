@@ -4,6 +4,7 @@
     - pi-hole-domains.yml
     - pi-hole-lists.yml
   tasks:
+    # FIXME: It would be better to implement an Ansible custom lookup plugin for Bitwarden
     - name: Gets the pi_hole_configuration attachment from Bitwarden
       ansible.builtin.shell:
         cmd: |
@@ -50,6 +51,15 @@
           patch: [ "{{ pi_hole_configuration_result.stdout | from_yaml | to_json }}" ]
 
   roles:
+    - role: common
+      vars:
+        disabled_services:
+          # ModemManager manages mobile broadband (2G/3G/4G) connections
+          - ModemManager
+          - bluetooth
+          - cups
+          # WPA Supplicant manages Wi-Fi client connections, it requires a Wi-Fi network interface to be enable to work.
+          - wpa_supplicant
     - role: pi-3
       vars:
         swiss_backup_location: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupLocation') | first }}" 
