@@ -5,4 +5,5 @@
     method: PATCH
     body_format: json
     body: "{{ item }}"
-  loop: "{{ pi_hole_configuration.patch }}"
+  loop: "{{ api.pi_hole_configuration.patch }}"
+  when: api is defined and api.pi_hole_configuration is defined and api.pi_hole_configuration.patch is defined

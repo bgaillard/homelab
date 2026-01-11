@@ -7,51 +7,60 @@
 # The variables MUST be defined in the same order as the sections appear in the documentation page.
 #
 # @see https://pi.hole/api/docs
+api:
+
+  # Authentication
+  authentication:
+    post:
+      password: "xxxxxxxx"
+  
+  
+  # DNS control
+  dns_control:
+    post: 
+      blocking: true
+      timer: null
+  
+  
+  # Group Management
+  # TODO: Implement Group Management
+  
+  
+  # Client Management
+  # TODO: Implement Client Management
+  
+  
+  # List Management
+  list_management:
+    put: []
+  
+  
+  # Domain Management
+  domain_management: 
+    put: []
+  
+  
+  # FTL information
+  # TODO: Implement FTL information
+  
+  
+  # Network information
+  # TODO: Implement Network information
+  
+  
+  # Pi-hole Configuration
+  pi_hole_configuration:
+    patch: []
 
 
-# Authentication
-authentication:
-  post:
-    password: "xxxxxxxx"
-
-
-# DNS control
-dns_control:
-  post: 
-    blocking: true
-    timer: null
-
-
-# Group Management
-# TODO: Implement Group Management
-
-
-# Client Management
-# TODO: Implement Client Management
-
-
-# List Management
-list_management:
-  put: []
-
-
-# Domain Management
-domain_management: 
-  put: []
-
-
-# FTL information
-# TODO: Implement FTL information
-
-
-# Network information
-# TODO: Implement Network information
-
-
-# Pi-hole Configuration
-pi_hole_configuration:
-  patch: []
-
+cron:
+  update_gravity:
+    enabled: true
+    minute: "0"
+    hour: "1"
+    weekday: "*"
+    month: "*"
+    day: "*"
 
 # DHCP
 # TODO: Implement DHCP

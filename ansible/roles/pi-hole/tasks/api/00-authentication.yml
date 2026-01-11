@@ -6,7 +6,7 @@
     method: POST
     body_format: json
     body:
-      password: "{{ authentication.post.password }}"
+      password: "{{ api.authentication.post.password }}"
     return_content: true
   failed_when: auth.status != 200 or 'error' in auth.json
   register: auth

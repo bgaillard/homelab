@@ -1,0 +1,14 @@
+---
+- name: Configure the 'update-gravity' cron job
+  become: true
+  ansible.builtin.cron:
+    name: "Update Pi-hole Gravity"
+    job: "/usr/local/bin/pihole -g >> /var/log/pihole_updateGravity.log 2>&1"
+    state: present
+    user: root
+    minute: "{{ cron.update_gravity.minute | default('0') }}"
+    hour: "{{ cron.update_gravity.hour | default('1') }}"
+    weekday: "{{ cron.update_gravity.weekday | default('*') }}"
+    month: "{{ cron.update_gravity.month | default('*') }}"
+    day: "{{ cron.update_gravity.day | default('*') }}"
+  when: cron.update_gravity.enabled | default(false)

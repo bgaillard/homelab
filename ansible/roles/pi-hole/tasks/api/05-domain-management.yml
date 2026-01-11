@@ -11,4 +11,5 @@
       comment: "{{ item.comment }}"
       enabled: "{{ item.enabled }}"
       groups: "{{ item.groups }}"
-  loop: "{{ domain_management.put }}"
+  loop: "{{ api.domain_management.put }}"
+  when: api is defined and api.domain_management is defined and api.domain_management.put is defined

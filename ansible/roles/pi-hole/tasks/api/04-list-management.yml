@@ -10,4 +10,5 @@
       enabled: "{{ item.enabled }}"
       type: "{{ item.type }}"
       groups: "{{ item.groups }}"
-  loop: "{{ list_management.put }}"
+  loop: "{{ api.list_management.put }}"
+  when: api is defined and api.list_management is defined and api.list_management.put is defined
