@@ -1,0 +1,23 @@
+# This rule is used to always name the Ethernet network interface into 'eth0'.
+#
+# At first start Linux udev does not systematically name the Ethernet network interface to 'eth0' otherwise and it's
+# problematic because the name is not stable across servers.
+#
+# It could be named into 'enp3s0' for example, this is a mechanism managed by the 'systemd-udevd' service. For 'enp3s0'
+# the name is chosen based on the following components:
+#   - en: Stands for Ethernet.
+#   - p3: Refers to the pysical location of the network interface, specifically the PCI bus number.
+#   - s0: Refers to the slot number of the PCI bus.
+#
+# To find the MAC address enter the following command:
+#   udevadm info --path=/sys/class/net/enp3s0 --attribute-walk
+#
+# Then to reload udev enter the following commands (this may not work and could need a reboot):
+#   udevadm control --reload-rules
+#   udevadm trigger --action=add --subsystem-match=net
+#
+# WARNING: BE CAREFUL before rebooting, the '/etc/network/interfaces' file should be configured with the new 'eth0'
+#          Ethernet interface name. Otherwise you could lost the internet connection.
+#
+# @see https://wiki.debian.org/udev
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="{{ mac_address }}", ATTR{type}=="1", NAME="eth0"

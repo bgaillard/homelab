@@ -1,5 +1,16 @@
 ---
+# Servers do no need several Linux services running by default.
+#
+# Please note that not useful network services are disabled through the '04-network.yml' file.
+disabled_services:
+  - bluetooth
+  - cups
+
+# Network configuration
+eth0_mode: dhcp
+mac_address: "00:00:00:00:00:00"
 ip_address: 0.0.0.0
+netmask: 255.255.255.0
 gateway: 192.168.1.1
 dns_1: 8.8.8.8
 dns_2: 8.8.4.4

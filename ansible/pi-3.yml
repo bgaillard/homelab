@@ -50,22 +50,18 @@
           pi_hole_configuration:
             patch: [ "{{ pi_hole_configuration_result.stdout | from_yaml | to_json }}" ]
 
-  #roles:
-  #  - role: common
-  #    vars:
-  #      disabled_services:
-  #        # ModemManager manages mobile broadband (2G/3G/4G) connections
-  #        - ModemManager
-  #        - bluetooth
-  #        - cups
-  #        # WPA Supplicant manages Wi-Fi client connections, it requires a Wi-Fi network interface to be enable to work.
-  #        - wpa_supplicant
-  #  - role: pi-3
-  #    vars:
-  #      swiss_backup_location: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupLocation') | first }}" 
-  #      swiss_backup_region: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupRegion') | first }}"
-  #      swiss_backup_project_name: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupProjectName') | first }}"
-  #      swiss_backup_password: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupPassword') | first }}"
-  #      swiss_backup_user_name: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupUserName') | first }}"
-  #      restic_password: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='resticPassword') | first }}"
-  #  - wireguard
+  roles:
+    - role: common
+      vars:
+        mac_address: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='macAddress') | first }}"
+        ip_address: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='ipAddress') | first }}"
+        eth0_mode: static
+    - role: pi-3
+      vars:
+        swiss_backup_location: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupLocation') | first }}" 
+        swiss_backup_region: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupRegion') | first }}"
+        swiss_backup_project_name: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupProjectName') | first }}"
+        swiss_backup_password: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupPassword') | first }}"
+        swiss_backup_user_name: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupUserName') | first }}"
+        restic_password: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='resticPassword') | first }}"
+    - wireguard

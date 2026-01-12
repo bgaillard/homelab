@@ -1,59 +1,68 @@
 ---
-# FIXME: Move this to a dedicated role for Rasberry Pi management
-# FIXME: We installed the Rasberry Pi in graphical mode which was not wanted. We should not remove NetworkManager and
-#        replace it with systemd-networkd
+# All our servers use only one Ethernet network interface named 'eth0'.
 #
-# @see https://raspberrytips.fr
-# @see https://raspberrytips.fr/desactiver-wifi-raspberry-pi/
-
-# Check if netplan is installed
-- name: Check if netplan is installed
-  ansible.builtin.stat:
-    path: /etc/netplan
-  register: netplan_installed
-
-
-########################################################################################################################
-# Ethernet interface managed with netplan
-########################################################################################################################
-
-# The initial Rasberry Pi OS install created files names '90-NM-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.yaml' in the 
-# '/etc/netplan/' directory to configure the network interfaces using NetworkManager or systemd-networkd as renderer.
+# We also manage network configuration using the traditional 'ifupdown' method, all other methode (i.e. Netplan, 
+# NetworkManager, systemd-networkd, etc.) are disabled and uninstalled.
 #
-# We remove those files because they are not needed anymore
-- name: Delete previously generated netplan config files
+# @see https://wiki.debian.org/udev
+# @see https://www.cyberciti.biz/faq/setting-up-an-network-interfaces-file/
+# @see https://manpages.debian.org/trixie/ifupdown-ng-compat/interfaces.5.en.html
+
+# Ensure the 'ifupdown' package is installed
+- name: Ensure the 'ifupdown' package is installed
   become: true
-  ansible.builtin.shell: rm -f 90-NM-*.yaml
-  when: netplan_installed.stat.exists and netplan_installed.stat.isdir
+  ansible.builtin.apt:
+    name: ifupdown
+    state: present
 
-# Warning, after 'netplan apply' this file is renamed into '90-NM-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.yaml'
-- name: Create an '/etc/netplan/10-eth0.yaml' file to configure a static IP address for the 'eth0' interface
+# Add an udev rule to set a predictable 'eth0' Ethernet network interface name
+- name: Render the '/etc/udev/rules.d/10-network.rules' udev rules file
   become: true
   ansible.builtin.template:
-    src: etc/netplan/10-eth0.yaml.j2
-    dest: /etc/netplan/10-eth0.yaml
+    src: etc/udev/rules.d/10-network.rules.j2
+    dest: /etc/udev/rules.d/10-network.rules
     owner: root
     group: root
-    mode: "400"
-  vars:
-    ip_address: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='ipAddress') | first }}" 
-    gateway: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='gateway') | first }}"
-    dns_1: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='dns1') | first }}"
-    dns_2: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='dns2') | first }}"
-  when: netplan_installed.stat.exists and netplan_installed.stat.isdir
+    mode: 0644
 
-- name: Apply the netplan configuration
+- name: Render the '/etc/network/interfaces' file
   become: true
-  ansible.builtin.command: netplan apply
-  when: netplan_installed.stat.exists and netplan_installed.stat.isdir
+  ansible.builtin.template:
+    src: etc/network/interfaces.j2
+    dest: /etc/network/interfaces
+    owner: root
+    group: root
+    mode: 0644
 
+- name: Enable the 'networking' service
+  become: true
+  ansible.builtin.systemd:
+    name: networking
+    enabled: true
+    state: started
 
-########################################################################################################################
-# Ethernet interface managed with /etc/network/interfaces
-#
-# @see https://manpages.debian.org/trixie/ifupdown-ng-compat/interfaces.5.en.html
-########################################################################################################################
+- name: Remove not useful network management packages
+  become: true
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: absent
+    purge: yes
+    autoremove: yes
+  loop:
+    - modemmanager
+    - netplan.io
+    - network-manager
+    - wpasupplicant
 
-# TODO: It would definitely be better to manage everything with a custom built template
-#
-# @see https://gist.github.com/analytically/5760207
+- name: Disable not useful network management services
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: false
+    state: stopped
+  failed_when: false
+  loop:
+    - ModemManager
+    - NetworkManager
+    - systemd-networkd
+    - wpa_supplicant

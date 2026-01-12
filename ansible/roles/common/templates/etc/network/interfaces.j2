@@ -1,0 +1,24 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+#
+# @see https://www.cyberciti.biz/faq/setting-up-an-network-interfaces-file/
+
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# Ethernet interface
+auto eth0
+{% if eth0_mode == 'dhcp' %}
+iface eth0 inet dhcp
+  ethernet-wol g
+{% elif eth0_mode == 'static' %}
+iface eth0 inet static
+  address {{ ip_address }}
+  netmask {{ netmask }}
+  gateway {{ gateway }}
+  dns-nameservers {{ dns_1 }} {{ dns_2 }}
+  ethernet-wol g
+{% endif %}
