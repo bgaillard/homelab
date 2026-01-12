@@ -1,0 +1,16 @@
+---
+- name: Install common Linux packages
+  become: true
+  ansible.builtin.package:
+    name:
+      - cifs-utils
+      - logrotate
+      - rfkill
+      - sysstat
+    state: latest
+
+- name: Install additional Linux packages
+  become: true
+  ansible.builtin.package:
+    name: "{{ packages | default([]) }}"
+    state: latest

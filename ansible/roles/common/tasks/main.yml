@@ -20,3 +20,4 @@
 - import_tasks: 02-disable-bluetooth.yml
 - import_tasks: 03-disable-wifi.yml
 - import_tasks: 04-network.yml
+- import_tasks: 05-packages.yml
