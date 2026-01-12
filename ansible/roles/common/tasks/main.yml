@@ -1,4 +1,21 @@
 ---
+# @see https://serverfault.com/questions/1044921/merging-variables-in-ansible-with-roles#answer-1044925
+- name: Merge 'network' properties with defaults
+  set_fact:
+    network: >
+      {{
+        {
+          'mac_address': '00:00:00:00:00:00',
+          'dhcp': true,
+          'static': {
+            'ip_address': '0.0.0.0',
+            'netmask': '255.255.255.0',
+            'gateway': '192.168.1.1',
+            'dns_1': '8.8.8.8',
+            'dns_2': '8.8.4.4'
+          }
+        } | combine(network, recursive=True)
+      }}
 - import_tasks: 01-disable-services.yml
 - import_tasks: 02-disable-bluetooth.yml
 - import_tasks: 03-disable-wifi.yml

@@ -53,9 +53,11 @@
   roles:
     - role: common
       vars:
-        mac_address: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='macAddress') | first }}"
-        ip_address: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='ipAddress') | first }}"
-        eth0_mode: static
+        network:
+          mac_address: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='macAddress') | first }}"
+          dhcp: false
+          static:
+            ip_address: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='ipAddress') | first }}"
     - role: pi-3
       vars:
         swiss_backup_location: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupLocation') | first }}" 

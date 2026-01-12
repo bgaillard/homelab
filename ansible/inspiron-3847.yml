@@ -3,6 +3,7 @@
   roles:
     - role: common
       vars:
-        mac_address: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='macAddress') | first }}"
+        network:
+          mac_address: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='macAddress') | first }}"
     - incus
     - inspiron-3847

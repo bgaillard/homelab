@@ -7,10 +7,18 @@ disabled_services:
   - cups
 
 # Network configuration
-eth0_mode: dhcp
-mac_address: "00:00:00:00:00:00"
-ip_address: 0.0.0.0
-netmask: 255.255.255.0
-gateway: 192.168.1.1
-dns_1: 8.8.8.8
-dns_2: 8.8.4.4
+network:
+
+  # Allows to find the Ethernet network interface by its MAC address and declare it with the 'eth0' name.
+  mac_address: "00:00:00:00:00:00"
+
+  # DHCP is enabled by default
+  dhcp: true
+
+  # Only used if 'dhcp' is set to false
+  static:
+    ip_address: 0.0.0.0
+    netmask: 255.255.255.0
+    gateway: 192.168.1.1
+    dns_1: 8.8.8.8
+    dns_2: 8.8.4.4

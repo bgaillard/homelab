@@ -11,14 +11,14 @@ iface lo inet loopback
 
 # Ethernet interface
 auto eth0
-{% if eth0_mode == 'dhcp' %}
+{% if network.dhcp %}
 iface eth0 inet dhcp
   ethernet-wol g
-{% elif eth0_mode == 'static' %}
+{% else %}
 iface eth0 inet static
-  address {{ ip_address }}
-  netmask {{ netmask }}
-  gateway {{ gateway }}
-  dns-nameservers {{ dns_1 }} {{ dns_2 }}
+  address {{ network.static.ip_address }}
+  netmask {{ network.static.netmask }}
+  gateway {{ network.static.gateway }}
+  dns-nameservers {{ network.static.dns_1 }} {{ network.static.dns_2 }}
   ethernet-wol g
 {% endif %}

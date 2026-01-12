@@ -20,4 +20,4 @@
 #          Ethernet interface name. Otherwise you could lost the internet connection.
 #
 # @see https://wiki.debian.org/udev
-SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="{{ mac_address }}", ATTR{type}=="1", NAME="eth0"
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="{{ network.mac_address }}", ATTR{type}=="1", NAME="eth0"
