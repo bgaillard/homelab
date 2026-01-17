@@ -1,20 +1,15 @@
----
-# @see https://www.reddit.com/r/pihole/comments/1hy05nx/best_simple_adlist_now_we_are_in_2025/
 pi_hole_lists:
-  # @see https://github.com/StevenBlack/hosts
-  - id: 1
-    address: "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
-    comment: "StevenBlack"
-    enabled: true
-    type: "block"
-    groups:
-      - 0
-  
-  # @see https://github.com/hagezi/dns-blocklists
-  - id: 2
-    address: "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/ultimate.txt"
-    comment: "hagezi - Multi ULTIMATE"
-    enabled: true
-    type: "block"
-    groups:
-      - 0
+- address: https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
+  comment: StevenBlack
+  enabled: true
+  groups:
+  - 0
+  id: 1
+  type: block
+- address: https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/ultimate.txt
+  comment: hagezi - Multi ULTIMATE
+  enabled: true
+  groups:
+  - 0
+  id: 2
+  type: block
