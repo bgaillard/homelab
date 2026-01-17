@@ -1,0 +1,13 @@
+---
+- name: Create the '~/.local/bin' directory if it does not exist
+  ansible.builtin.file:
+    path: "{{ ansible_facts['env']['HOME'] }}/.local/bin"
+    state: directory
+    mode: '0700'
+
+- name: Copy file '~/.local/bin/update-pi-hole-iac.py'
+  ansible.builtin.copy:
+    src: home/baptiste/.local/bin/update-pi-hole-iac.py
+    dest: "{{ ansible_facts['env']['HOME'] }}/.local/bin/update-pi-hole-iac.py"
+    mode: u=rx
+    force: true

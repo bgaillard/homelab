@@ -1,0 +1,30 @@
+---
+- name: Install Linux packages
+  become: true
+  ansible.builtin.package:
+    name:
+      - gh
+      - git
+    state: latest
+
+- name: Create the '~/.config/gh' directory if it does not exist
+  ansible.builtin.file:
+    path: "{{ ansible_facts['env']['HOME'] }}/.config/gh"
+    state: directory
+    mode: '0700'
+
+- name: Render the '~/.gitconfig' GIT configuration file
+  ansible.builtin.template:
+    src: home/baptiste/.gitconfig.j2
+    dest: "{{ ansible_facts['env']['HOME'] }}/.gitconfig"
+    owner: "{{ ansible_facts['env']['USER'] }}"
+    group: "{{ ansible_facts['env']['USER'] }}"
+    mode: "0600"
+
+- name: Render the '~/.config/gh/hosts.yml' configuration file
+  ansible.builtin.template:
+    src: home/baptiste/.config/gh/hosts.yml.j2
+    dest: "{{ ansible_facts['env']['HOME'] }}/.config/gh/hosts.yml"
+    owner: "{{ ansible_facts['env']['USER'] }}"
+    group: "{{ ansible_facts['env']['USER'] }}"
+    mode: "0600"

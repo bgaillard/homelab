@@ -8,6 +8,16 @@ backups_smb_username: "SambaUser"
 backups_smb_password: "SambaPassword"
 backups_smb_version: "SambaVersion"
 
+# GIT configuration
+git_user_email: "john.doe@email.com"
+git_user_name: "John Doe"
+
+# GitHub configuration
+github_pat: "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+github_username: "john_doe"
+
+# Pi-hole application password used to manage update of Pi-hole IaC
+pi_hole_app_password: "xxxxxxxx"
 
 swiss_backup_location: "location"
 swiss_backup_region: "region"

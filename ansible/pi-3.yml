@@ -65,5 +65,10 @@
         swiss_backup_project_name: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupProjectName') | first }}"
         swiss_backup_password: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupPassword') | first }}"
         swiss_backup_user_name: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupUserName') | first }}"
+        git_user_email: "{{ lookup('community.general.bitwarden', '40322edd-657a-49f2-b509-adbb0135e41d', search='id', field='email') | first }}"
+        git_user_name: "Baptiste Gaillard"
+        github_pat: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='githubPat') | first }}"
+        github_username: "bgaillard"
+        pi_hole_app_password: "{{ lookup('community.general.bitwarden', 'abeb0359-b120-4da6-8043-b3d1003775fa', search='id', field='appPassword') | first }}"
         restic_password: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='resticPassword') | first }}"
     - wireguard

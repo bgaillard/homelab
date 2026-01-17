@@ -1,4 +1,11 @@
 ---
+- name: Install Linux packages
+  become: true
+  ansible.builtin.package:
+    name:
+      - restic
+    state: latest
+
 - name: Create the '~/.local/bin' directory if it does not exist
   ansible.builtin.file:
     path: "{{ ansible_facts['env']['HOME'] }}/.local/bin"

@@ -30,8 +30,8 @@
     job: "/root/.local/bin/backup-pi-hole >> /var/log/backup-pi-hole/backup-pi-hole.log 2>&1"
     state: present
     user: root
-    minute: "*"
-    hour: "*"
+    minute: "0"
+    hour: "0"
     weekday: "*"
     month: "*"
     day: "*"
