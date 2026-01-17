@@ -3,4 +3,4 @@
 - import_tasks: 02-hard-drives.yml
 - import_tasks: 03-backups.yml
 - import_tasks: 04-restic.yml
-- import_tasks: 05-pi-hole-iac-update.yml
+- import_tasks: 05-update-pi-hole-iac.yml
