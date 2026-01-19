@@ -7,7 +7,6 @@ pi_hole_domains:
   id: 1
   kind: exact
   type: deny
-  unicode: dsp.360yield.com
 - comment: Added from Query Log
   domain: mp.4dex.io
   enabled: true
@@ -16,418 +15,363 @@ pi_hole_domains:
   id: 2
   kind: exact
   type: deny
-  unicode: mp.4dex.io
-- comment: Equativ (formerly Smart AdServer)
-  domain: ^.*[\.]?smartadserver\.com$
+- comment: Adverstisement platform
+  domain: ^.*[\.]?richaudience\.com$
   enabled: true
   groups:
   - 0
   id: 3
   kind: regex
   type: deny
-  unicode: ^.*[\.]?smartadserver\.com$
-- comment: Added from Query Log
-  domain: prebid.a-mo.net
+- comment: Equativ (formerly Smart AdServer)
+  domain: ^.*[\.]?smartadserver\.com$
   enabled: true
   groups:
   - 0
   id: 4
-  kind: exact
+  kind: regex
   type: deny
-  unicode: prebid.a-mo.net
 - comment: Added from Query Log
-  domain: data00.adlooxtracking.com
+  domain: prebid.a-mo.net
   enabled: true
   groups:
   - 0
   id: 5
   kind: exact
   type: deny
-  unicode: data00.adlooxtracking.com
 - comment: Added from Query Log
-  domain: ep1.adtrafficquality.google
+  domain: data00.adlooxtracking.com
   enabled: true
   groups:
   - 0
   id: 6
   kind: exact
   type: deny
-  unicode: ep1.adtrafficquality.google
 - comment: Added from Query Log
-  domain: ep2.adtrafficquality.google
+  domain: ep1.adtrafficquality.google
   enabled: true
   groups:
   - 0
   id: 7
   kind: exact
   type: deny
-  unicode: ep2.adtrafficquality.google
-- comment: null
-  domain: redirect.affilizz.com
+- comment: Added from Query Log
+  domain: ep2.adtrafficquality.google
   enabled: true
   groups:
   - 0
   id: 8
   kind: exact
-  type: allow
-  unicode: redirect.affilizz.com
-- comment: Added from Query Log
-  domain: events.agrvt.com
+  type: deny
+- comment: null
+  domain: redirect.affilizz.com
   enabled: true
   groups:
   - 0
   id: 9
   kind: exact
-  type: deny
-  unicode: events.agrvt.com
+  type: allow
 - comment: Added from Query Log
-  domain: a.amxrtb.com
+  domain: events.agrvt.com
   enabled: true
   groups:
   - 0
   id: 10
   kind: exact
   type: deny
-  unicode: a.amxrtb.com
 - comment: Added from Query Log
-  domain: audienceexposure.com
+  domain: a.amxrtb.com
   enabled: true
   groups:
   - 0
   id: 11
   kind: exact
   type: deny
-  unicode: audienceexposure.com
 - comment: Added from Query Log
-  domain: ghent-gce-nl.bidswitch.net
+  domain: audienceexposure.com
   enabled: true
   groups:
   - 0
   id: 12
   kind: exact
   type: deny
-  unicode: ghent-gce-nl.bidswitch.net
 - comment: Added from Query Log
-  domain: cookiesync.api.bliink.io
+  domain: ghent-gce-nl.bidswitch.net
   enabled: true
   groups:
   - 0
   id: 13
   kind: exact
   type: deny
-  unicode: cookiesync.api.bliink.io
 - comment: Added from Query Log
-  domain: prebid.bliink.io
+  domain: cookiesync.api.bliink.io
   enabled: true
   groups:
   - 0
   id: 14
   kind: exact
   type: deny
-  unicode: prebid.bliink.io
 - comment: Added from Query Log
-  domain: ads21.console.adtarget.com.tr
+  domain: prebid.bliink.io
   enabled: true
   groups:
   - 0
   id: 15
   kind: exact
   type: deny
-  unicode: ads21.console.adtarget.com.tr
 - comment: Added from Query Log
-  domain: api.consentframework.com
+  domain: ads21.console.adtarget.com.tr
   enabled: true
   groups:
   - 0
   id: 16
   kind: exact
   type: deny
-  unicode: api.consentframework.com
 - comment: Added from Query Log
-  domain: csync.copper6.com
+  domain: api.consentframework.com
   enabled: true
   groups:
   - 0
   id: 17
   kind: exact
   type: deny
-  unicode: csync.copper6.com
 - comment: Added from Query Log
-  domain: client-side-metrics.eu.criteo.net
+  domain: csync.copper6.com
   enabled: true
   groups:
   - 0
   id: 18
   kind: exact
   type: deny
-  unicode: client-side-metrics.eu.criteo.net
 - comment: Added from Query Log
-  domain: imageproxy.eu.criteo.net
+  domain: client-side-metrics.eu.criteo.net
   enabled: true
   groups:
   - 0
   id: 19
   kind: exact
   type: deny
-  unicode: imageproxy.eu.criteo.net
 - comment: Added from Query Log
-  domain: client-side-metrics.nl3.eu.criteo.net
+  domain: imageproxy.eu.criteo.net
   enabled: true
   groups:
   - 0
   id: 20
   kind: exact
   type: deny
-  unicode: client-side-metrics.nl3.eu.criteo.net
 - comment: Added from Query Log
-  domain: casale-match.dotomi.com
+  domain: client-side-metrics.nl3.eu.criteo.net
   enabled: true
   groups:
   - 0
   id: 21
   kind: exact
   type: deny
-  unicode: casale-match.dotomi.com
 - comment: Added from Query Log
-  domain: publishers.edisound.com
+  domain: casale-match.dotomi.com
   enabled: true
   groups:
   - 0
   id: 22
   kind: exact
   type: deny
-  unicode: publishers.edisound.com
 - comment: Added from Query Log
-  domain: d7.eu-3-id5-sync.com
+  domain: publishers.edisound.com
   enabled: true
   groups:
   - 0
   id: 23
   kind: exact
   type: deny
-  unicode: d7.eu-3-id5-sync.com
 - comment: Added from Query Log
-  domain: d5.eu-4-id5-sync.com
+  domain: d7.eu-3-id5-sync.com
   enabled: true
   groups:
   - 0
   id: 24
   kind: exact
   type: deny
-  unicode: d5.eu-4-id5-sync.com
 - comment: Added from Query Log
-  domain: eu.fastcmp.com
+  domain: d5.eu-4-id5-sync.com
   enabled: true
   groups:
   - 0
   id: 25
   kind: exact
   type: deny
-  unicode: eu.fastcmp.com
 - comment: Added from Query Log
-  domain: www.flashb.id
+  domain: eu.fastcmp.com
   enabled: true
   groups:
   - 0
   id: 26
   kind: exact
   type: deny
-  unicode: www.flashb.id
 - comment: Added from Query Log
-  domain: user-sync.fwmrm.net
+  domain: www.flashb.id
   enabled: true
   groups:
   - 0
   id: 27
   kind: exact
   type: deny
-  unicode: user-sync.fwmrm.net
 - comment: Added from Query Log
-  domain: 83a19.v.fwmrm.net
+  domain: user-sync.fwmrm.net
   enabled: true
   groups:
   - 0
   id: 28
   kind: exact
   type: deny
-  unicode: 83a19.v.fwmrm.net
 - comment: Added from Query Log
-  domain: e2c65.gcp.gvt2.com
+  domain: 83a19.v.fwmrm.net
   enabled: true
   groups:
   - 0
   id: 29
   kind: exact
   type: deny
-  unicode: e2c65.gcp.gvt2.com
 - comment: Added from Query Log
-  domain: trace.mediago.io
+  domain: e2c65.gcp.gvt2.com
   enabled: true
   groups:
   - 0
   id: 30
   kind: exact
   type: deny
-  unicode: trace.mediago.io
 - comment: Added from Query Log
-  domain: events.mediarithmics.com
+  domain: trace.mediago.io
   enabled: true
   groups:
   - 0
   id: 31
   kind: exact
   type: deny
-  unicode: events.mediarithmics.com
 - comment: Added from Query Log
-  domain: cs.minutemedia-prebid.com
+  domain: events.mediarithmics.com
   enabled: true
   groups:
   - 0
   id: 32
   kind: exact
   type: deny
-  unicode: cs.minutemedia-prebid.com
 - comment: Added from Query Log
-  domain: logs.netflix.com
+  domain: cs.minutemedia-prebid.com
   enabled: true
   groups:
   - 0
   id: 33
   kind: exact
-  type: allow
-  unicode: logs.netflix.com
-- comment: Added from Query Log
-  domain: events.newsroom.bi
+  type: deny
+- comment: null
+  domain: logs.netflix.com
   enabled: true
   groups:
   - 0
   id: 34
   kind: exact
-  type: deny
-  unicode: events.newsroom.bi
+  type: allow
 - comment: Added from Query Log
-  domain: icu.newsroom.bi
+  domain: events.newsroom.bi
   enabled: true
   groups:
   - 0
   id: 35
   kind: exact
   type: deny
-  unicode: icu.newsroom.bi
 - comment: Added from Query Log
-  domain: visitor.europe-west9.gcp.omnitagjs.com
+  domain: icu.newsroom.bi
   enabled: true
   groups:
   - 0
   id: 36
   kind: exact
   type: deny
-  unicode: visitor.europe-west9.gcp.omnitagjs.com
 - comment: Added from Query Log
-  domain: visitor.omnitagjs.com
+  domain: visitor.europe-west9.gcp.omnitagjs.com
   enabled: true
   groups:
   - 0
   id: 37
   kind: exact
   type: deny
-  unicode: visitor.omnitagjs.com
 - comment: Added from Query Log
-  domain: pbs.optidigital.com
+  domain: visitor.omnitagjs.com
   enabled: true
   groups:
   - 0
   id: 38
   kind: exact
   type: deny
-  unicode: pbs.optidigital.com
 - comment: Added from Query Log
-  domain: p1.outbrain.com
+  domain: pbs.optidigital.com
   enabled: true
   groups:
   - 0
   id: 39
   kind: exact
   type: deny
-  unicode: p1.outbrain.com
 - comment: Added from Query Log
-  domain: plausible.io
+  domain: p1.outbrain.com
   enabled: true
   groups:
   - 0
   id: 40
   kind: exact
   type: deny
-  unicode: plausible.io
 - comment: Added from Query Log
-  domain: api.poool.fr
+  domain: plausible.io
   enabled: true
   groups:
   - 0
   id: 41
   kind: exact
   type: deny
-  unicode: api.poool.fr
 - comment: Added from Query Log
-  domain: shb.richaudience.com
+  domain: api.poool.fr
   enabled: true
   groups:
   - 0
   id: 42
   kind: exact
   type: deny
-  unicode: shb.richaudience.com
 - comment: Added from Query Log
-  domain: sync.richaudience.com
+  domain: csync.smilewanted.com
   enabled: true
   groups:
   - 0
   id: 43
   kind: exact
   type: deny
-  unicode: sync.richaudience.com
 - comment: Added from Query Log
-  domain: csync.smilewanted.com
+  domain: sync.sparteo.com
   enabled: true
   groups:
   - 0
   id: 44
   kind: exact
   type: deny
-  unicode: csync.smilewanted.com
 - comment: Added from Query Log
-  domain: sync.sparteo.com
+  domain: www.viously.com
   enabled: true
   groups:
   - 0
   id: 45
   kind: exact
   type: deny
-  unicode: sync.sparteo.com
 - comment: Added from Query Log
-  domain: www.viously.com
+  domain: measurements-api.wonderpush.com
   enabled: true
   groups:
   - 0
   id: 46
   kind: exact
   type: deny
-  unicode: www.viously.com
 - comment: Added from Query Log
-  domain: measurements-api.wonderpush.com
+  domain: x.com
   enabled: true
   groups:
   - 0
   id: 47
   kind: exact
   type: deny
-  unicode: measurements-api.wonderpush.com
-- comment: Added from Query Log
-  domain: x.com
-  enabled: true
-  groups:
-  - 0
-  id: 48
-  kind: exact
-  type: deny
-  unicode: x.com
