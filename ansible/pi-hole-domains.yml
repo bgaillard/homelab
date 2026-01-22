@@ -263,7 +263,7 @@ pi_hole_domains:
   id: 33
   kind: exact
   type: deny
-- comment: null
+- comment: Added from Query Log
   domain: logs.netflix.com
   enabled: true
   groups:
@@ -336,7 +336,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: csync.smilewanted.com
+  domain: shb.richaudience.com
   enabled: true
   groups:
   - 0
@@ -344,7 +344,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: sync.sparteo.com
+  domain: sync.richaudience.com
   enabled: true
   groups:
   - 0
@@ -352,7 +352,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: www.viously.com
+  domain: csync.smilewanted.com
   enabled: true
   groups:
   - 0
@@ -360,7 +360,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: measurements-api.wonderpush.com
+  domain: sync.sparteo.com
   enabled: true
   groups:
   - 0
@@ -368,10 +368,26 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: x.com
+  domain: www.viously.com
   enabled: true
   groups:
   - 0
   id: 47
+  kind: exact
+  type: deny
+- comment: Added from Query Log
+  domain: measurements-api.wonderpush.com
+  enabled: true
+  groups:
+  - 0
+  id: 48
+  kind: exact
+  type: deny
+- comment: Added from Query Log
+  domain: x.com
+  enabled: true
+  groups:
+  - 0
+  id: 49
   kind: exact
   type: deny
