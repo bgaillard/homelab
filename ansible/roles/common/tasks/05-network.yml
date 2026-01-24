@@ -34,6 +34,15 @@
     group: root
     mode: 0644
 
+- name: Render the '/etc/resolv.conf' file
+  become: true
+  ansible.builtin.template:
+    src: etc/resolv.conf.j2
+    dest: /etc/resolv.conf
+    owner: root
+    group: root
+    mode: 0644
+
 - name: Enable the 'networking' service
   become: true
   ansible.builtin.systemd:
@@ -52,7 +61,15 @@
     - modemmanager
     - netplan.io
     - network-manager
-    - wpasupplicant
+
+- name: If wifi is not used, remove 'wpasupplicant' package
+  become: true
+  ansible.builtin.apt:
+    name: wpasupplicant
+    state: absent
+    purge: yes
+    autoremove: yes
+  when: not network.wifi.enabled | default(false)
 
 - name: Disable not useful network management services
   become: true
@@ -65,4 +82,18 @@
     - ModemManager
     - NetworkManager
     - systemd-networkd
-    - wpa_supplicant
+
+- name: Disable the 'wpa_supplicant' service if wifi is not used
+  become: true
+  ansible.builtin.systemd:
+    name: wpa_supplicant
+    enabled: false
+    state: stopped
+  failed_when: false
+  when: not network.wifi.enabled | default(false)
+
+- name: Restart the 'networking' service to apply changes
+  become: true
+  ansible.builtin.systemd:
+    name: networking
+    state: restarted

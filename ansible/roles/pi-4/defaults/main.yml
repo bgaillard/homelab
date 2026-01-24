@@ -1,0 +1,2 @@
+# HashiCorp Vault configuration
+vault_version: "1.21.2"

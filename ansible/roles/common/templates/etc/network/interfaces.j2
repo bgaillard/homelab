@@ -9,16 +9,32 @@ source /etc/network/interfaces.d/*
 auto lo
 iface lo inet loopback
 
+{% if network.ethernet.enabled %}
 # Ethernet interface
 auto eth0
-{% if network.dhcp %}
+{% if network.ethernet.dhcp %}
 iface eth0 inet dhcp
   ethernet-wol g
 {% else %}
 iface eth0 inet static
-  address {{ network.static.ip_address }}
-  netmask {{ network.static.netmask }}
-  gateway {{ network.static.gateway }}
-  dns-nameservers {{ network.static.dns_1 }} {{ network.static.dns_2 }}
+  address {{ network.ethernet.static.ip_address }}
+  netmask {{ network.ethernet.static.netmask }}
+  gateway {{ network.ethernet.static.gateway }}
   ethernet-wol g
+{% endif %}
+{% endif %}
+
+{% if network.wifi.enabled %}
+# Wi-Fi interface
+allow-hotplug wlan0
+{% if network.wifi.dhcp %}
+iface wlan0 inet dhcp
+{% else %}
+iface wlan0 inet static
+  address {{ network.wifi.static.ip_address }}
+  netmask {{ network.wifi.static.netmask }}
+  gateway {{ network.wifi.static.gateway }}
+{% endif %}
+  wpa-ssid "{{ network.wifi.wpa_ssid }}"
+  wpa-psk "{{ network.wifi.wpa_psk }}"
 {% endif %}

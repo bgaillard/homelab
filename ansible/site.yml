@@ -1,3 +1,27 @@
 ---
+# Internet box
+#
+# Deploys the following:
+#   - Samba storage (additional backup space which is then backed up to Swiss Backup with Restic)
+
+# Rasberry Pi 4
+#
+# Deploys the following:
+#   - Hashicorp Vault 
+- import_playbook: pi-4.yml
+
+# Dell Inspiron 3847
+#
+# Deploys the following:
+#  - Incus
+#  - Kubernetes cluster
 - import_playbook: inspiron-3847.yml
+
+# Raspberry Pi 3
+#
+# Deploys the following:
+#   - Pi-hole (and so DNS server)
+#   - WireGuard VPN server
+#   - Restic backuo to Swiss Backup
+#
 - import_playbook: pi-3.yml

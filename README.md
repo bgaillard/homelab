@@ -1,5 +1,6 @@
 # Home lab
 
+
 ## Ansible
 
 ```bash
@@ -12,6 +13,7 @@ python -m pip install --user --upgrade ansible
 # Install required Ansible collections
 ansible-galaxy collection install community.general
 ```
+
 
 ## SSH configuration
 
@@ -26,6 +28,7 @@ Host homelab
 ```
 
 This allows to not reveal the IP address or hostname of your home lab if you commit your configuration to a public Git repository.
+
 
 ## Backups
 

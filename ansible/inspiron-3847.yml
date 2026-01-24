@@ -4,7 +4,8 @@
     - role: common
       vars:
         network:
-          mac_address: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='macAddress') | first }}"
+          ethernet:
+            mac_address: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='macAddress') | first }}"
         packages:
           - curl
     - incus

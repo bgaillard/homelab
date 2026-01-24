@@ -8,20 +8,46 @@ disabled_services:
 
 # Network configuration
 network:
+  nameservers:
+    - 8.8.8.8
+    - 8.8.4.4
 
-  # Allows to find the Ethernet network interface by its MAC address and declare it with the 'eth0' name.
-  mac_address: "00:00:00:00:00:00"
+  ethernet:
 
-  # DHCP is enabled by default
-  dhcp: true
+    # Enable or disable the Ethernet network interface configuration
+    enabled: true
 
-  # Only used if 'dhcp' is set to false
-  static:
-    ip_address: 0.0.0.0
-    netmask: 255.255.255.0
-    gateway: 192.168.1.1
-    dns_1: 8.8.8.8
-    dns_2: 8.8.4.4
+    # Allows to find the Ethernet network interface by its MAC address and declare it with the 'eth0' name.
+    mac_address: "00:00:00:00:00:00"
+
+    # DHCP is enabled by default
+    dhcp: true
+
+    # Only used if 'dhcp' is set to false
+    static:
+      ip_address: 0.0.0.0
+      netmask: 255.255.255.0
+      gateway: 192.168.1.1
+
+  wifi:
+
+    # Enable or disable the WiFi network interface configuration
+    enabled: false
+
+    # Allows to find the WiFi network interface by its MAC address and declare it with the 'wlan0' name.
+    mac_address: "00:00:00:00:00:00"
+
+    # DHCP is enabled by default
+    dhcp: true
+
+    # Only used if 'dhcp' is set to false
+    static:
+      ip_address: 0.0.0.0
+      netmask: 255.255.255.0
+      gateway: 192.168.1.1
+
+    wpa_ssid: ""
+    wpa_psk: ""
 
 # Additional Linux packages to be installed
 packages: []

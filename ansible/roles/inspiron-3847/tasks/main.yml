@@ -1,4 +1,3 @@
 ---
-- import_tasks: 00-poweroff.yml
-- import_tasks: 01-hard-drives.yml
+- import_tasks: 01-poweroff.yml
 - import_tasks: 02-backups.yml

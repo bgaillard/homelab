@@ -1,0 +1,22 @@
+site_name: "Homelab"
+repo_url: "https://github.com/bgaillard/homelab"
+nav:
+  - Introduction: index.md
+  - Kubernetes: kubernetes.md
+  - Incus: incus.md
+  - Pi-hole: pi-hole.md
+  - Restic: restic.md
+  - Vault: vault.md
+  - Wireguard: wireguard.md
+
+# @see https://squidfunk.github.io/mkdocs-material/
+theme: 
+  #name: readthedocs
+  name: material
+  features:
+    - header.autohide
+  palette:
+    scheme: slate
+
+watch:
+  - "docs/index.md"

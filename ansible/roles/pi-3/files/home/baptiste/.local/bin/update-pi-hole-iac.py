@@ -79,6 +79,7 @@ def process_domains(domains: list[PiHoleDomain]) -> list[PiHoleDomain]:
     for domain in domains:
         del domain["date_added"]
         del domain["date_modified"]
+        del domain["unicode"]
 
     # Split domains into parts for proper sorting
     def domain_key(domain: PiHoleDomain) -> tuple[str, ...]:

@@ -19,9 +19,12 @@ github_username: "john_doe"
 # Pi-hole application password used to manage update of Pi-hole IaC
 pi_hole_app_password: "xxxxxxxx"
 
+# Infomaniak Swiss Backup configuration
 swiss_backup_location: "location"
 swiss_backup_region: "region"
 swiss_backup_project_name: "project_name"
 swiss_backup_password: "password"
 swiss_backup_user_name: "username"
+
+# Restic configuration
 restic_password: "restic_password"

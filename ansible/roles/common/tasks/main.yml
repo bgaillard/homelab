@@ -5,19 +5,37 @@
     network: >
       {{
         {
-          'mac_address': '00:00:00:00:00:00',
-          'dhcp': true,
-          'static': {
-            'ip_address': '0.0.0.0',
-            'netmask': '255.255.255.0',
-            'gateway': '192.168.1.1',
-            'dns_1': '8.8.8.8',
-            'dns_2': '8.8.4.4'
-          }
+          'nameservers': [
+            '8.8.8.8',
+            '8.8.4.4'
+          ],
+          'ethernet': {
+            'enabled': true,
+            'mac_address': '00:00:00:00:00:00',
+            'dhcp': true,
+            'static': {
+              'ip_address': '0.0.0.0',
+              'netmask': '255.255.255.0',
+              'gateway': '192.168.1.1'
+            }
+          },
+          'wifi': {
+            'enabled': false,
+            'mac_address': '00:00:00:00:00:00',
+            'dhcp': true,
+            'static': {
+              'ip_address': '0.0.0.0',
+              'netmask': '255.255.255.0',
+              'gateway': '192.168.1.1'
+            },
+            'wpa_ssid': '',
+            'wpa_psk': ''
+          } 
         } | combine(network, recursive=True)
       }}
-- import_tasks: 01-disable-services.yml
-- import_tasks: 02-disable-bluetooth.yml
-- import_tasks: 03-disable-wifi.yml
-- import_tasks: 04-network.yml
-- import_tasks: 05-packages.yml
+- import_tasks: 01-packages.yml
+- import_tasks: 02-disable-services.yml
+- import_tasks: 03-disable-bluetooth.yml
+- import_tasks: 04-disable-wifi.yml
+- import_tasks: 05-network.yml
+- import_tasks: 06-mount-srv-backups.yml

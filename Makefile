@@ -9,7 +9,13 @@ ansible-inspiron-3847: ## Run Ansible playbook only for the Inspiron 3847
 ansible-pi-3: ## Run Ansible playbook playbook only for the Raspberry Pi 3
 	@ansible-playbook --inventory ansible/hosts.yml --limit pi-3 ansible/site.yml
 
+ansible-pi-4: ## Run Ansible playbook playbook only for the Raspberry Pi 4
+	@ansible-playbook --inventory ansible/hosts.yml --limit pi-4 ansible/site.yml
+
 .PHONY: ansible ansible-inspiron-3847 ansible-pi-3
+
+doc-serve: ## Serve documentation with live reload
+	@mkdocs serve --open --livereload
 
 packer-k8s-control-plane-build: ## Build K8s Control Plane Packer image
 	@cd packer/k8s/control-plane && make build

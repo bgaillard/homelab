@@ -7,6 +7,7 @@
     owner: root
     group: root
     mode: 644
+  when: not network.wifi.enabled | default(false)
 
 - name: Enable the 'disable-wifi.service' systemd service to disable the Wi-Fi interface now
   become: true
@@ -14,3 +15,4 @@
     name: disable-wifi.service
     enabled: true
     state: started
+  when: not network.wifi.enabled | default(false)

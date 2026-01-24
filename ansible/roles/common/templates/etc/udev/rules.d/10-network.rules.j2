@@ -6,7 +6,7 @@
 # It could be named into 'enp3s0' for example, this is a mechanism managed by the 'systemd-udevd' service. For 'enp3s0'
 # the name is chosen based on the following components:
 #   - en: Stands for Ethernet.
-#   - p3: Refers to the pysical location of the network interface, specifically the PCI bus number.
+#   - p3: Refers to the physical location of the network interface, specifically the PCI bus number.
 #   - s0: Refers to the slot number of the PCI bus.
 #
 # To find the MAC address enter the following command:
@@ -20,4 +20,13 @@
 #          Ethernet interface name. Otherwise you could lost the internet connection.
 #
 # @see https://wiki.debian.org/udev
-SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="{{ network.mac_address }}", ATTR{type}=="1", NAME="eth0"
+
+# Ethernet network interface renaming rule to 'eth0'.
+{% if network.ethernet.enabled %}
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="{{ network.ethernet.mac_address }}", ATTR{type}=="1", NAME="eth0"
+{% endif %}
+
+# Wifi network interface renaming rule to 'wlan0'.
+{% if network.wifi.enabled %}
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="{{ network.wifi.mac_address }}", ATTR{type}=="1", NAME="wlan0"
+{% endif %}

@@ -1,0 +1,20 @@
+---
+- hosts: pi-4
+  roles:
+    - role: common
+      vars:
+        network:
+          ethernet:
+            enabled: true
+            mac_address: "{{ lookup('community.general.bitwarden', '5f23f062-c642-4c10-8c57-b3dc01505dd6', search='id', field='macAddress') | first }}"
+            dhcp: false
+            static:
+              ip_address: "{{ lookup('community.general.bitwarden', '5f23f062-c642-4c10-8c57-b3dc01505dd6', search='id', field='ipAddress') | first }}"
+    # - role: pi-4
+    #   vars:
+    #     swiss_backup_location: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupLocation') | first }}" 
+    #     swiss_backup_region: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupRegion') | first }}"
+    #     swiss_backup_project_name: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupProjectName') | first }}"
+    #     swiss_backup_password: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupPassword') | first }}"
+    #     swiss_backup_user_name: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupUserName') | first }}"
+    #     vault_version: "1.21.2"

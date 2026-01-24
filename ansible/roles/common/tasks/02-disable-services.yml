@@ -6,4 +6,5 @@
     enabled: false
     masked: true
     state: stopped
+  failed_when: false
   loop: "{{ disabled_services }}"
