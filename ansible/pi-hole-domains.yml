@@ -23,7 +23,7 @@ pi_hole_domains:
   id: 3
   kind: regex
   type: deny
-- comment: null
+- comment: Outbrain
   domain: ^.*[\.]?outbrain\.com$
   enabled: true
   groups:
