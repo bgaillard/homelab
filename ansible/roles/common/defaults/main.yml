@@ -9,6 +9,7 @@ disabled_services:
 # Network configuration
 network:
   nameservers:
+    - 192.168.1.1
     - 8.8.8.8
     - 8.8.4.4
 

@@ -177,7 +177,9 @@ def main():
                 "pr", "create", 
                 "--title", "feat: Update Pi-Hole IaC", 
                 "--body", "Automated update of Pi-Hole domains and lists.", 
-                "--head", branch_name, "--base", "main"
+                "--assignee", "@me",
+                "--head", branch_name, 
+                "--base", "main"
             ],
             project_dir
         )
