@@ -4,37 +4,6 @@
     - pi-hole-domains.yml
     - pi-hole-lists.yml
   tasks:
-    # FIXME: It would be better to use Hashicorp Vault here instead of shelling out to the Bitwarden CLI.
-    - name: Gets the pi_hole_configuration attachment from Bitwarden
-      ansible.builtin.shell:
-        cmd: |
-          # Get the status of the Bitwarden vault
-          BW_STATUS=$(bw status)
-
-          # If the status does not contain "unlocked" exit with error
-          if ! echo "${BW_STATUS}" | grep -q "unlocked"; then
-              echo "Error: Bitwarden vault is locked or an error was encountered checking the Vault status."
-              echo "Result of the 'bw status' command:"
-              echo "${BW_STATUS}"
-              exit 1
-          fi
-
-          # Get the attachment content
-          ATTACHMENT=$(bw get attachment pi_hole_configuration.yml --itemid 7f9fe70f-a0f4-45c2-b062-b3c50170d4c0 --output /dev/stdout)
-
-          # If the attachment does not contain "Saved /dev/stdout", exit with error
-          if ! echo "${ATTACHMENT}" | grep -q "Saved /dev/stdout"; then
-              echo "Error: Could not retrieve the attachment 'pi_hole_configuration.yml' from Bitwarden."
-              echo "Result of the 'bw get attachment' command:"
-              echo "${ATTACHMENT}"
-              exit 1
-          fi
-
-          # Remove the last line which contains only "Saved /dev/stdout"
-          echo "$ATTACHMENT" | head -n -1
-      delegate_to: localhost
-      register: pi_hole_configuration_result
-
     - name: Configure Pi-hole
       ansible.builtin.import_role:
         name: pi-hole
@@ -48,7 +17,7 @@
           list_management:
             put: "{{ pi_hole_lists }}"
           pi_hole_configuration:
-            patch: [ "{{ pi_hole_configuration_result.stdout | from_yaml | to_json }}" ]
+            patch: ["{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/data/pi-hole:pi_hole_configuration') }}"]
 
   roles:
     - role: common

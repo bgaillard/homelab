@@ -5,7 +5,7 @@
       vars:
         network:
           ethernet:
-            mac_address: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='macAddress') | first }}"
+            mac_address: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/data/servers/inspiron-3847:mac_address') }}"
         packages:
           - curl
     - incus
