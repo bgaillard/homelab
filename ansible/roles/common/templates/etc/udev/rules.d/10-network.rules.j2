@@ -21,12 +21,12 @@
 #
 # @see https://wiki.debian.org/udev
 
-# Ethernet network interface renaming rule to 'eth0'.
 {% if network.ethernet.enabled %}
+# Ethernet network interface renaming rule to 'eth0'.
 SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="{{ network.ethernet.mac_address }}", ATTR{type}=="1", NAME="eth0"
 {% endif %}
 
-# Wifi network interface renaming rule to 'wlan0'.
 {% if network.wifi.enabled %}
+# Wifi network interface renaming rule to 'wlan0'.
 SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="{{ network.wifi.mac_address }}", ATTR{type}=="1", NAME="wlan0"
 {% endif %}

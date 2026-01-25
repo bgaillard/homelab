@@ -47,6 +47,15 @@ terraform-k8s-init: ## Initialize K8s Terraform
 terraform-k8s-plan: ## Plan K8s Terraform
 	@cd terraform/k8s && terraform plan
 
+terraform-vault-init: ## Initialize Vault Terraform
+	@cd terraform/vault && terraform init
+
+terraform-vault-plan: ## Plan Vault Terraform
+	@cd terraform/vault && terraform plan
+
+terraform-vault-apply: ## Apply Vault Terraform
+	@cd terraform/vault && terraform apply
+
 .PHONY: packer-k8s-control-plane-build packer-k8s-etcd-build packer-k8s-load-balancer-build packer-k8s-worker-build terraform-k8s-apply terraform-k8s-fmt terraform-k8s-init terraform-k8s-plan
 
 .DEFAULT_GOAL := help

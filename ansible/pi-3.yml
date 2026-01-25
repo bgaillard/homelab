@@ -55,17 +55,17 @@
       vars:
         network:
           ethernet:
-            mac_address: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='macAddress') | first }}"
+            mac_address: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/data/servers/pi-3:mac_address') }}"
             dhcp: false
             static:
-              ip_address: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='ipAddress') | first }}"
+              ip_address: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/data/servers/pi-3:ip_address') }}"
     - role: pi-3
       vars:
-        swiss_backup_location: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupLocation') | first }}" 
-        swiss_backup_region: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupRegion') | first }}"
-        swiss_backup_project_name: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupProjectName') | first }}"
-        swiss_backup_password: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupPassword') | first }}"
-        swiss_backup_user_name: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='swissBackupUserName') | first }}"
+        swiss_backup_location: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/data/swiss-backup/homelab:location') }}" 
+        swiss_backup_region: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/data/swiss-backup/homelab:region') }}"
+        swiss_backup_project_name: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/data/swiss-backup/homelab:project_name') }}"
+        swiss_backup_password: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/data/swiss-backup/homelab:password') }}"
+        swiss_backup_user_name: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/data/swiss-backup/homelab:user_name') }}"
         git_user_email: "{{ lookup('community.general.bitwarden', '40322edd-657a-49f2-b509-adbb0135e41d', search='id', field='email') | first }}"
         git_user_name: "Baptiste Gaillard"
         github_pat: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='githubPat') | first }}"
