@@ -8,6 +8,7 @@ nav:
   - Restic: restic.md
   - Vault: vault.md
   - Wireguard: wireguard.md
+  - IaC Updater: iac-updater.md
 
 # @see https://squidfunk.github.io/mkdocs-material/
 theme: 

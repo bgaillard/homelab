@@ -16,6 +16,11 @@ git_user_name: "John Doe"
 github_pat: "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 github_username: "john_doe"
 
+# IaC Updater
+iac_updater_client_id: "xxxxxxxx"
+iac_updater_installation_id: "xxxxxxxx"
+iac_updater_private_key: "xxxxxxxx"
+
 # Pi-hole application password used to manage update of Pi-hole IaC
 pi_hole_app_password: "xxxxxxxx"
 

@@ -1,9 +1,30 @@
 ---
+- name: Create the '~/.github' directory if it does not exist
+  ansible.builtin.file:
+    path: "{{ ansible_facts['env']['HOME'] }}/.github"
+    state: directory
+    mode: '0700'
+
 - name: Create the '~/.local/bin' directory if it does not exist
   ansible.builtin.file:
     path: "{{ ansible_facts['env']['HOME'] }}/.local/bin"
     state: directory
     mode: '0700'
+
+- name: Write the Github Iac Updater private key to the '~/.github/iac-updater.private-key.pem' file
+  ansible.builtin.copy:
+    content: "{{ iac_updater_private_key }}"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.github/iac-updater.private-key.pem"
+    mode: '0600'
+
+- name: Install the Python pip packages required by the 'update-pi-hole-iac.py' script
+  ansible.builtin.pip:
+    break_system_packages: true
+    name:
+      - PyJWT
+      - cryptography
+    executable: pip3
+    state: present
 
 - name: Copy file '~/.local/bin/update-pi-hole-iac.py'
   ansible.builtin.copy:
@@ -25,7 +46,7 @@
   become: true
   ansible.builtin.cron:
     name: "Update Pi-hole IAC"
-    job: "PI_HOLE_PASSWORD={{ pi_hole_app_password }} {{ ansible_facts['env']['HOME'] }}/.local/bin/update-pi-hole-iac.py >> /var/log/update-pi-hole-iac/update-pi-hole-iac.log 2>&1"
+    job: "IAC_UPDATER_CLIENT_ID={{ iac_updater_client_id }} IAC_UPDATER_INSTALLATION_ID={{ iac_updater_installation_id }} IAC_UPDATER_PRIVATE_KEY_PATH={{ ansible_facts['env']['HOME'] }}/.github/iac-updater.private-key.pem PI_HOLE_PASSWORD={{ pi_hole_app_password }} {{ ansible_facts['env']['HOME'] }}/.local/bin/update-pi-hole-iac.py >> /var/log/update-pi-hole-iac/update-pi-hole-iac.log 2>&1"
     state: present
     user: "{{ ansible_facts['env']['USER'] }}"
     minute: "0"

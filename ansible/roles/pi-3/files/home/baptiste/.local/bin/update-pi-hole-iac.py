@@ -2,14 +2,16 @@
 
 import logging
 import shutil
-from typing import cast
+import jwt
 import os
 import requests
+import time
 import yaml
 import subprocess
 
 from logging import Logger
 from tempfile import TemporaryDirectory
+from typing import cast
 from subprocess import CompletedProcess
 
 # Define utility types
@@ -24,6 +26,11 @@ logging.basicConfig(
 )
 logger: Logger = logging.getLogger(__name__)
 
+# IaC Updater configuration
+iac_updater_client_id: str | None = None
+iac_updater_installation_id: str | None = None
+iac_updater_private_key_path: str | None = None
+
 # Pi-hole API configuration
 pi_hole_api_url: str | None = None
 pi_hole_password: str | None = None
@@ -32,23 +39,90 @@ pi_hole_password: str | None = None
 GIT_REPO_URL: str = "https://github.com/bgaillard/homelab.git"
 
 
-def gh(args: list[str], cwd: str, check: bool = True) -> CompletedProcess[str]:
-    return run(args=["gh"] + args, cwd=cwd, check=check)
+def create_gh_jwt(private_key_path: str, client_id: str) -> str:
+    # @see https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-json-web-token-jwt-for-a-github-app#example-using-python-to-generate-a-jwt
+    signing_key: bytes | None = None
+
+    with open(private_key_path, 'rb') as pem_file:
+        signing_key = pem_file.read()
+
+    payload = {
+        # Issued at time
+        'iat': int(time.time()),
+        # JWT expiration time (10 minutes maximum)
+        'exp': int(time.time()) + 600,
+        
+        # GitHub App's client ID
+        'iss': client_id
+    }
+
+    # Create JWT
+    return jwt.encode(payload, signing_key, algorithm='RS256')
+
+
+def create_gh_token(jwt: str, installation_id: str) -> str:
+    url: str = f"https://api.github.com/app/installations/{installation_id}/access_tokens"
+    headers: dict[str, str] = {
+        "Authorization": f"Bearer {jwt}",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28"
+    }
+    response = requests.post(url, headers=headers)
+    response.raise_for_status()
+    return cast(str, cast(JSON, response.json())["token"])
+
+
+def create_pr(token: str, title: str, body: str, head: str, base: str) -> JSON:
+    url: str = "https://api.github.com/repos/bgaillard/homelab/pulls"
+    headers: dict[str, str] = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28"
+    }
+    response = requests.post(
+        url, 
+        headers=headers, 
+        json={
+            "title": title,
+            "body": body,
+            "head": head,
+            "base": base
+        }
+    )
+    try:
+        response.raise_for_status()
+    except requests.HTTPError as e:
+        logger.error(f"Failed to create pull request: {e}")
+        logger.error(f"Response: {response.text}")
+        raise
+    return cast(JSON, response.json())
 
 
 def git(args: list[str], cwd: str, check: bool = True) -> CompletedProcess[str]:
     return run(args=["git"] + args, cwd=cwd, check=check)
 
 
-def run(args: list[str], cwd: str, check: bool = True) -> CompletedProcess[str]:
-    return subprocess.run(
-        args,
-        cwd=cwd, 
-        check=check, 
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True
-    )
+def run(args: list[str], cwd: str, check: bool = True, env: dict[str, str] | None = None) -> CompletedProcess[str]:
+    completed_process: CompletedProcess[str] | None = None
+
+    try:
+        completed_process = subprocess.run(
+            args,
+            cwd=cwd, 
+            check=check, 
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            env=env
+        )
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Command '{' '.join(args)}' failed with exit code {e.returncode}")
+        logger.error(f"Stdout: {cast(str, e.stdout)}")
+        logger.error(f"Stderr: {cast(str, e.stderr)}")
+        raise
+
+    return completed_process
+
 
 def get(endpoint: str, sid: str) -> JSON:
     """Make a GET request to the Pi-hole API."""
@@ -124,9 +198,22 @@ def process_lists(lists: list[PiHoleList]) -> list[PiHoleList]:
 
 
 def main():
+    global iac_updater_client_id
+    global iac_updater_installation_id
+    global iac_updater_private_key_path
     global pi_hole_api_url
     global pi_hole_password
 
+    iac_updater_client_id = os.getenv("IAC_UPDATER_CLIENT_ID")
+    iac_updater_installation_id = os.getenv("IAC_UPDATER_INSTALLATION_ID")
+    iac_updater_private_key_path = os.getenv(
+        "IAC_UPDATER_PRIVATE_KEY_PATH", 
+        f"{os.getenv("HOME")}/.github/iac-updater.private-key.pem"
+    )
+    if iac_updater_client_id is None:
+        raise ValueError("IAC_UPDATER_CLIENT_ID environment variable is not set!")
+    if iac_updater_installation_id is None:
+        raise ValueError("IAC_UPDATER_INSTALLATION_ID environment variable is not set!")
     pi_hole_api_url = os.getenv("PI_HOLE_API_URL", "http://pi.hole/api")
     pi_hole_password = os.getenv("PI_HOLE_PASSWORD")
     if pi_hole_password is None:
@@ -162,6 +249,12 @@ def main():
     logging.info("Checking for changes in the Git repository...")
     completed_process: CompletedProcess[str] = git(["status", "--porcelain"], project_dir, check=False)
 
+    # Get a Github token to then create a PR as the IaC Updater Github App
+    logging.info("Creating a JWT for the IaC Updater Github App...")
+    jwt: str = create_gh_jwt(iac_updater_private_key_path, iac_updater_client_id)
+    logging.info("Creating token for the IaC Updater Github App installation...")
+    github_app_token: str = create_gh_token(jwt, iac_updater_installation_id)
+
     # If there are changes commit and push
     if "M ansible/pi-hole-" in completed_process.stdout:
         logging.info("Changes detected, creating a new branch and committing changes...")
@@ -172,16 +265,12 @@ def main():
         _ = git(["add", "."], project_dir)
         _ = git(["commit", "--message", "feat: Update Pi-Hole IaC"], project_dir)
         _ = git(["push", "--set-upstream", "origin", branch_name], project_dir)
-        _ = gh(
-            [
-                "pr", "create", 
-                "--title", "feat: Update Pi-Hole IaC", 
-                "--body", "Automated update of Pi-Hole domains and lists.", 
-                "--assignee", "@me",
-                "--head", branch_name, 
-                "--base", "main"
-            ],
-            project_dir
+        _ = create_pr(
+            token=github_app_token,
+            title="feat: Update Pi-Hole IaC",
+            body="Automated update of Pi-Hole domains and lists.",
+            head=branch_name,
+            base="main"
         )
 
         logging.info("Changes committed and pull request created.")

@@ -39,6 +39,9 @@
         git_user_name: "Baptiste Gaillard"
         github_pat: "{{ lookup('community.general.bitwarden', '7f9fe70f-a0f4-45c2-b062-b3c50170d4c0', search='id', field='githubPat') | first }}"
         github_username: "bgaillard"
+        iac_updater_client_id: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/data/iac-updater:client_id') }}"
+        iac_updater_installation_id: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/data/iac-updater:installation_id') }}"
+        iac_updater_private_key: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/data/iac-updater:private_key') }}"
         pi_hole_app_password: "{{ lookup('community.general.bitwarden', 'abeb0359-b120-4da6-8043-b3d1003775fa', search='id', field='appPassword') | first }}"
         restic_password: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='resticPassword') | first }}"
     - wireguard
