@@ -79,7 +79,7 @@ pi_hole_domains:
   id: 10
   kind: exact
   type: deny
-- comment: test
+- comment: null
   domain: redirect.affilizz.com
   enabled: true
   groups:
