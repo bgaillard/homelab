@@ -7,20 +7,68 @@ pi_hole_domains:
   id: 1
   kind: exact
   type: deny
-- comment: Added from Query Log
-  domain: mp.4dex.io
+- comment: Adagio
+  domain: ^.*[\.]?4dex\.io$
   enabled: true
   groups:
   - 0
   id: 2
-  kind: exact
+  kind: regex
+  type: deny
+- comment: Google Ad Traffic Quality
+  domain: ^.*[\.]?adtrafficquality\.google$
+  enabled: true
+  groups:
+  - 0
+  id: 3
+  kind: regex
+  type: deny
+- comment: Bliink
+  domain: ^.*[\.]?bliink\.io$
+  enabled: true
+  groups:
+  - 0
+  id: 4
+  kind: regex
+  type: deny
+- comment: Criteo
+  domain: ^.*[\.]?criteo\.net$
+  enabled: true
+  groups:
+  - 0
+  id: 5
+  kind: regex
   type: deny
 - comment: null
   domain: ^.*[\.]?fastcmp\.com$
   enabled: true
   groups:
   - 0
-  id: 3
+  id: 6
+  kind: regex
+  type: deny
+- comment: Mediago
+  domain: ^.*[\.]?mediago\.io$
+  enabled: true
+  groups:
+  - 0
+  id: 7
+  kind: regex
+  type: deny
+- comment: null
+  domain: ^.*[\.]?newsroom\.bi$
+  enabled: true
+  groups:
+  - 0
+  id: 8
+  kind: regex
+  type: deny
+- comment: OpenWeb
+  domain: ^.*[\.]?omnitagjs\.com$
+  enabled: true
+  groups:
+  - 0
+  id: 9
   kind: regex
   type: deny
 - comment: Outbrain
@@ -28,7 +76,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 4
+  id: 10
   kind: regex
   type: deny
 - comment: Adverstisement platform
@@ -36,7 +84,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 5
+  id: 11
   kind: regex
   type: deny
 - comment: Equativ (formerly Smart AdServer)
@@ -44,7 +92,15 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 6
+  id: 12
+  kind: regex
+  type: deny
+- comment: Sparteo
+  domain: ^.*[\.]?sparteo\.com$
+  enabled: true
+  groups:
+  - 0
+  id: 13
   kind: regex
   type: deny
 - comment: Added from Query Log
@@ -52,7 +108,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 7
+  id: 14
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -60,23 +116,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 8
-  kind: exact
-  type: deny
-- comment: Added from Query Log
-  domain: ep1.adtrafficquality.google
-  enabled: true
-  groups:
-  - 0
-  id: 9
-  kind: exact
-  type: deny
-- comment: Added from Query Log
-  domain: ep2.adtrafficquality.google
-  enabled: true
-  groups:
-  - 0
-  id: 10
+  id: 15
   kind: exact
   type: deny
 - comment: null
@@ -84,7 +124,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 11
+  id: 16
   kind: exact
   type: allow
 - comment: Added from Query Log
@@ -92,7 +132,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 12
+  id: 17
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -100,7 +140,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 13
+  id: 18
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -108,7 +148,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 14
+  id: 19
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -116,51 +156,11 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 15
-  kind: exact
-  type: deny
-- comment: Added from Query Log
-  domain: cookiesync.api.bliink.io
-  enabled: true
-  groups:
-  - 0
-  id: 16
-  kind: exact
-  type: deny
-- comment: Added from Query Log
-  domain: prebid.bliink.io
-  enabled: true
-  groups:
-  - 0
-  id: 17
-  kind: exact
-  type: deny
-- comment: Added from Query Log
-  domain: ads21.console.adtarget.com.tr
-  enabled: true
-  groups:
-  - 0
-  id: 18
-  kind: exact
-  type: deny
-- comment: Added from Query Log
-  domain: api.consentframework.com
-  enabled: true
-  groups:
-  - 0
-  id: 19
-  kind: exact
-  type: deny
-- comment: Added from Query Log
-  domain: csync.copper6.com
-  enabled: true
-  groups:
-  - 0
   id: 20
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: client-side-metrics.eu.criteo.net
+  domain: altice.endpoint.bidwatch.io
   enabled: true
   groups:
   - 0
@@ -168,7 +168,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: imageproxy.eu.criteo.net
+  domain: ads21.console.adtarget.com.tr
   enabled: true
   groups:
   - 0
@@ -176,7 +176,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: client-side-metrics.nl3.eu.criteo.net
+  domain: api.consentframework.com
   enabled: true
   groups:
   - 0
@@ -184,7 +184,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: casale-match.dotomi.com
+  domain: csync.copper6.com
   enabled: true
   groups:
   - 0
@@ -192,7 +192,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: publishers.edisound.com
+  domain: casale-match.dotomi.com
   enabled: true
   groups:
   - 0
@@ -200,7 +200,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: d7.eu-3-id5-sync.com
+  domain: publishers.edisound.com
   enabled: true
   groups:
   - 0
@@ -208,7 +208,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: d5.eu-4-id5-sync.com
+  domain: d7.eu-3-id5-sync.com
   enabled: true
   groups:
   - 0
@@ -216,7 +216,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: www.flashb.id
+  domain: d5.eu-4-id5-sync.com
   enabled: true
   groups:
   - 0
@@ -224,7 +224,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: user-sync.fwmrm.net
+  domain: www.flashb.id
   enabled: true
   groups:
   - 0
@@ -232,7 +232,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: 83a19.v.fwmrm.net
+  domain: user-sync.fwmrm.net
   enabled: true
   groups:
   - 0
@@ -240,7 +240,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: e2c65.gcp.gvt2.com
+  domain: 7dcde.v.fwmrm.net
   enabled: true
   groups:
   - 0
@@ -248,7 +248,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: trace.mediago.io
+  domain: 83a19.v.fwmrm.net
   enabled: true
   groups:
   - 0
@@ -256,7 +256,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: events.mediarithmics.com
+  domain: e2c65.gcp.gvt2.com
   enabled: true
   groups:
   - 0
@@ -264,7 +264,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: cs.minutemedia-prebid.com
+  domain: events.mediarithmics.com
   enabled: true
   groups:
   - 0
@@ -272,23 +272,23 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: logs.netflix.com
+  domain: cs.minutemedia-prebid.com
   enabled: true
   groups:
   - 0
   id: 35
   kind: exact
-  type: allow
+  type: deny
 - comment: Added from Query Log
-  domain: events.newsroom.bi
+  domain: logs.netflix.com
   enabled: true
   groups:
   - 0
   id: 36
   kind: exact
-  type: deny
+  type: allow
 - comment: Added from Query Log
-  domain: icu.newsroom.bi
+  domain: pbs.optidigital.com
   enabled: true
   groups:
   - 0
@@ -296,7 +296,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: visitor.europe-west9.gcp.omnitagjs.com
+  domain: plausible.io
   enabled: true
   groups:
   - 0
@@ -304,7 +304,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: visitor.omnitagjs.com
+  domain: api.poool.fr
   enabled: true
   groups:
   - 0
@@ -312,7 +312,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: pbs.optidigital.com
+  domain: csync.smilewanted.com
   enabled: true
   groups:
   - 0
@@ -320,7 +320,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: plausible.io
+  domain: www.viously.com
   enabled: true
   groups:
   - 0
@@ -328,7 +328,7 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: api.poool.fr
+  domain: measurements-api.wonderpush.com
   enabled: true
   groups:
   - 0
@@ -336,42 +336,10 @@ pi_hole_domains:
   kind: exact
   type: deny
 - comment: Added from Query Log
-  domain: csync.smilewanted.com
-  enabled: true
-  groups:
-  - 0
-  id: 43
-  kind: exact
-  type: deny
-- comment: Added from Query Log
-  domain: sync.sparteo.com
-  enabled: true
-  groups:
-  - 0
-  id: 44
-  kind: exact
-  type: deny
-- comment: Added from Query Log
-  domain: www.viously.com
-  enabled: true
-  groups:
-  - 0
-  id: 45
-  kind: exact
-  type: deny
-- comment: Added from Query Log
-  domain: measurements-api.wonderpush.com
-  enabled: true
-  groups:
-  - 0
-  id: 46
-  kind: exact
-  type: deny
-- comment: Added from Query Log
   domain: x.com
   enabled: true
   groups:
   - 0
-  id: 47
+  id: 43
   kind: exact
   type: deny
