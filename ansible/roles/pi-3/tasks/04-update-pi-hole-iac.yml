@@ -17,14 +17,121 @@
     dest: "{{ ansible_facts['env']['HOME'] }}/.github/iac-updater.private-key.pem"
     mode: '0600'
 
-- name: Install the Python pip packages required by the 'update-pi-hole-iac.py' script
+- name: Install the required Python pip packages
   ansible.builtin.pip:
     break_system_packages: true
     name:
+      # Required by the 'community.hashi_vault.vault_read' module
+      - hvac
+      # Required by the 'update-pi-hole-iac.py' script
       - PyJWT
       - cryptography
     executable: pip3
     state: present
+
+- name: Configure the 'pi-hole-iac-updater' Vault AppRole role
+  block:
+    - name: Create the 'pi-hole-iac-updater' Vault policy
+      community.hashi_vault.vault_write:
+        token: "{{ lookup('env', 'VAULT_TOKEN') }}"
+        url: "{{ lookup('env', 'VAULT_ADDR') }}"
+        path: "sys/policy/pi-hole-iac-updater"
+        # FIXME: Configure a dedicated CA / a private PKI and distribute certs on hosts
+        validate_certs: false
+        data:
+          policy: |
+            path "kv/data/pi-hole" {
+              capabilities = ["read", "patch", "update"]
+            }
+
+    - name: Create or update the 'pi-hole-iac-updater' Vault AppRole role
+      community.hashi_vault.vault_write:
+        token: "{{ lookup('env', 'VAULT_TOKEN') }}"
+        url: "{{ lookup('env', 'VAULT_ADDR') }}"
+        path: "auth/approle/role/pi-hole-iac-updater"
+        # FIXME: Configure a dedicated CA / a private PKI and distribute certs on hosts
+        validate_certs: false
+        data:
+          role_name: "pi-hole-iac-updater"
+          bind_secret_id: true
+          secret_id_bound_cidrs:
+            - "192.168.1.0/24"
+          secret_id_num_uses: 0
+          secret_id_ttl: "0"
+          token_ttl: "30s"
+          token_max_ttl: "120s"
+          token_policies:
+            - "pi-hole-iac-updater"
+          token_bound_cidrs:
+            - "192.168.1.0/24"
+          token_explicit_max_ttl: "120s"
+          token_no_default_policy: true
+          token_type: "batch"
+    
+    - name: Get the 'pi-hole-iac-updater' Vault AppRole role ID
+      community.hashi_vault.vault_read:
+        token: "{{ lookup('env', 'VAULT_TOKEN') }}"
+        url: "{{ lookup('env', 'VAULT_ADDR') }}"
+        path: "auth/approle/role/pi-hole-iac-updater/role-id"
+        # FIXME: Configure a dedicated CA / a private PKI and distribute certs on hosts
+        validate_certs: false
+      register: vault_pi_hole_iac_updater_approle_role_id
+    
+    - name: List the secret ID accessors for the 'pi-hole-iac-updater' Vault AppRole
+      community.hashi_vault.vault_list:
+        token: "{{ lookup('env', 'VAULT_TOKEN') }}"
+        url: "{{ lookup('env', 'VAULT_ADDR') }}"
+        path: "auth/approle/role/pi-hole-iac-updater/secret-id"
+        # FIXME: Configure a dedicated CA / a private PKI and distribute certs on hosts
+        validate_certs: false
+      register: vault_pi_hole_iac_updater_approle_secret_id_accessors
+
+    - name: Cleanup all the secret IDs
+      community.hashi_vault.vault_write:
+        token: "{{ lookup('env', 'VAULT_TOKEN') }}"
+        url: "{{ lookup('env', 'VAULT_ADDR') }}"
+        path: "auth/approle/role/pi-hole-iac-updater/secret-id-accessor/destroy"
+        # FIXME: Configure a dedicated CA / a private PKI and distribute certs on hosts
+        validate_certs: false
+        data:
+          secret_id_accessor: "{{ item }}"
+      loop: "{{ vault_pi_hole_iac_updater_approle_secret_id_accessors.data.data.get('keys') }}"
+     
+    - name: Generate a new secret ID for the 'pi-hole-iac-updater' Vault AppRole
+      community.hashi_vault.vault_write:
+        token: "{{ lookup('env', 'VAULT_TOKEN') }}"
+        url: "{{ lookup('env', 'VAULT_ADDR') }}"
+        path: "auth/approle/role/pi-hole-iac-updater/secret-id"
+        # FIXME: Configure a dedicated CA / a private PKI and distribute certs on hosts
+        validate_certs: false
+        data:
+          cidr_list:
+            - "192.168.1.0/24"
+          token_bound_cidrs:
+            - "192.168.1.0/24"
+          num_uses: 0
+          ttl: "0"
+      register: vault_pi_hole_iac_updater_approle_secret_id
+    
+    - name: DEBUG secret_id
+      ansible.builtin.debug:
+        msg: "{{ vault_pi_hole_iac_updater_approle_secret_id }}"
+    
+    - name: Create the '~/.vault' directory if it does not exist
+      ansible.builtin.file:
+        path: "{{ ansible_facts['env']['HOME'] }}/.vault"
+        state: directory
+        mode: '0700'
+    
+    - name: Write the 'pi-hole-iac-updater' Vault AppRole credentials to the '~/.vault/approle-pi-hole-iac-updater.json' file
+      ansible.builtin.copy:
+        content: |
+          {
+            "role_id": "{{ vault_pi_hole_iac_updater_approle_role_id.data.data.role_id }}",
+            "secret_id": "{{ vault_pi_hole_iac_updater_approle_secret_id.data.data.secret_id }}"
+          }
+        dest: "{{ ansible_facts['env']['HOME'] }}/.vault/approle-pi-hole-iac-updater.json"
+        mode: '0600'
 
 - name: Copy file '~/.local/bin/update-pi-hole-iac.py'
   ansible.builtin.copy:

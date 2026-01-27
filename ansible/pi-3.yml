@@ -23,6 +23,11 @@
     - role: common
       vars:
         network:
+          nameservers:
+            - 127.0.0.1
+            - 192.168.1.1
+            - 8.8.8.8
+            - 8.8.4.4
           ethernet:
             mac_address: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/data/servers/pi-3:mac_address') }}"
             dhcp: false

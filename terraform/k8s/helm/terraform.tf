@@ -4,13 +4,13 @@ terraform {
   required_providers {
     # @see https://registry.terraform.io/providers/hashicorp/helm/latest/docs
     helm = {
-      source = "hashicorp/helm"
+      source  = "hashicorp/helm"
       version = "3.1.1"
     }
 
     # @see https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs
     kubernetes = {
-      source = "hashicorp/kubernetes"
+      source  = "hashicorp/kubernetes"
       version = "3.0.1"
     }
   }
