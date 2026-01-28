@@ -47,12 +47,20 @@ pi_hole_domains:
   id: 6
   kind: regex
   type: deny
+- comment: FreeWheel
+  domain: ^.*[\.]?fwmrm\.net$
+  enabled: true
+  groups:
+  - 0
+  id: 7
+  kind: regex
+  type: deny
 - comment: Mediago
   domain: ^.*[\.]?mediago\.io$
   enabled: true
   groups:
   - 0
-  id: 7
+  id: 8
   kind: regex
   type: deny
 - comment: null
@@ -60,7 +68,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 8
+  id: 9
   kind: regex
   type: deny
 - comment: OpenWeb
@@ -68,7 +76,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 9
+  id: 10
   kind: regex
   type: deny
 - comment: Outbrain
@@ -76,7 +84,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 10
+  id: 11
   kind: regex
   type: deny
 - comment: Adverstisement platform
@@ -84,7 +92,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 11
+  id: 12
   kind: regex
   type: deny
 - comment: Equativ (formerly Smart AdServer)
@@ -92,7 +100,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 12
+  id: 13
   kind: regex
   type: deny
 - comment: Sparteo
@@ -100,7 +108,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 13
+  id: 14
   kind: regex
   type: deny
 - comment: Added from Query Log
@@ -108,7 +116,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 14
+  id: 15
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -116,7 +124,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 15
+  id: 16
   kind: exact
   type: deny
 - comment: null
@@ -124,7 +132,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 16
+  id: 17
   kind: exact
   type: allow
 - comment: Added from Query Log
@@ -132,7 +140,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 17
+  id: 18
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -140,7 +148,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 18
+  id: 19
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -148,7 +156,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 19
+  id: 20
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -156,7 +164,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 20
+  id: 21
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -164,7 +172,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 21
+  id: 22
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -172,7 +180,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 22
+  id: 23
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -180,7 +188,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 23
+  id: 24
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -188,7 +196,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 24
+  id: 25
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -196,7 +204,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 25
+  id: 26
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -204,7 +212,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 26
+  id: 27
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -212,7 +220,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 27
+  id: 28
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -220,7 +228,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 28
+  id: 29
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -228,7 +236,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 29
+  id: 30
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -236,7 +244,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 30
+  id: 31
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -244,7 +252,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 31
+  id: 32
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -252,7 +260,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 32
+  id: 33
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -260,7 +268,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 33
+  id: 34
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -268,7 +276,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 34
+  id: 35
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -276,7 +284,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 35
+  id: 36
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -284,7 +292,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 36
+  id: 37
   kind: exact
   type: allow
 - comment: Added from Query Log
@@ -292,7 +300,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 37
+  id: 38
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -300,7 +308,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 38
+  id: 39
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -308,7 +316,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 39
+  id: 40
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -316,7 +324,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 40
+  id: 41
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -324,7 +332,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 41
+  id: 42
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -332,7 +340,7 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 42
+  id: 43
   kind: exact
   type: deny
 - comment: Added from Query Log
@@ -340,6 +348,6 @@ pi_hole_domains:
   enabled: true
   groups:
   - 0
-  id: 43
+  id: 44
   kind: exact
   type: deny
