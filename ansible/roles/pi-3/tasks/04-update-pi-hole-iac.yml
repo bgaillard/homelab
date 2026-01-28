@@ -113,10 +113,6 @@
           ttl: "0"
       register: vault_pi_hole_iac_updater_approle_secret_id
     
-    - name: DEBUG secret_id
-      ansible.builtin.debug:
-        msg: "{{ vault_pi_hole_iac_updater_approle_secret_id }}"
-    
     - name: Create the '~/.vault' directory if it does not exist
       ansible.builtin.file:
         path: "{{ ansible_facts['env']['HOME'] }}/.vault"

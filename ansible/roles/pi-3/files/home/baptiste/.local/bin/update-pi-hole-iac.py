@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import json
+import hvac
 import logging
 import shutil
 import jwt
@@ -9,6 +11,9 @@ import time
 import yaml
 import subprocess
 
+from hvac.api.auth_methods.approle import AppRole
+from hvac.api.secrets_engines.kv import Kv
+from hvac.api.secrets_engines.kv_v2 import KvV2
 from logging import Logger
 from tempfile import TemporaryDirectory
 from typing import cast
@@ -38,6 +43,39 @@ pi_hole_password: str | None = None
 # Github repository URL
 GIT_REPO_URL: str = "https://github.com/bgaillard/homelab.git"
 
+
+def vault_login(vault_url: str, role_id: str, secret_id: str) -> hvac.Client:
+    client: hvac.Client = hvac.Client(
+        url=vault_url,
+        # FIXME: Insecure, for testing purposes only
+        verify=False
+    )
+    approle: AppRole = cast(AppRole, client.auth.approle)
+
+    approle.login(role_id=role_id, secret_id=secret_id)  # pyright: ignore[reportUnknownMemberType]
+
+    return client
+
+def vault_get_pi_hole_configuration(client: hvac.Client) -> JSON:
+    kv: Kv = cast(Kv, client.secrets.kv)
+    kv_v2: KvV2 = cast(KvV2, kv.v2)
+
+    secret_version_response = kv_v2.read_secret_version(  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+        mount_point='kv',
+        path='pi-hole'
+    )
+
+    return cast(JSON, secret_version_response['data']['data']['pi_hole_configuration'])
+
+def vault_update_pi_hole_configuration(client: hvac.Client, configuration: JSON) -> None:
+    kv: Kv = cast(Kv, client.secrets.kv)
+    kv_v2: KvV2 = cast(KvV2, kv.v2)
+
+    kv_v2.create_or_update_secret(  # pyright: ignore[reportUnknownMemberType]
+        mount_point='kv',
+        path='pi-hole',
+        secret={'pi_hole_configuration': configuration}
+    )
 
 def create_gh_jwt(private_key_path: str, client_id: str) -> str:
     # @see https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-json-web-token-jwt-for-a-github-app#example-using-python-to-generate-a-jwt
@@ -197,27 +235,12 @@ def process_lists(lists: list[PiHoleList]) -> list[PiHoleList]:
     return lists
 
 
-def main():
-    global iac_updater_client_id
-    global iac_updater_installation_id
-    global iac_updater_private_key_path
-    global pi_hole_api_url
-    global pi_hole_password
-
-    iac_updater_client_id = os.getenv("IAC_UPDATER_CLIENT_ID")
-    iac_updater_installation_id = os.getenv("IAC_UPDATER_INSTALLATION_ID")
-    iac_updater_private_key_path = os.getenv(
-        "IAC_UPDATER_PRIVATE_KEY_PATH", 
-        f"{os.getenv("HOME")}/.github/iac-updater.private-key.pem"
-    )
-    if iac_updater_client_id is None:
-        raise ValueError("IAC_UPDATER_CLIENT_ID environment variable is not set!")
-    if iac_updater_installation_id is None:
-        raise ValueError("IAC_UPDATER_INSTALLATION_ID environment variable is not set!")
-    pi_hole_api_url = os.getenv("PI_HOLE_API_URL", "http://pi.hole/api")
-    pi_hole_password = os.getenv("PI_HOLE_PASSWORD")
-    if pi_hole_password is None:
-        raise ValueError("PI_HOLE_PASSWORD environment variable is not set!")
+def update_domains_and_lists(
+    sid: str, 
+    iac_updater_client_id: str,
+    iac_updater_installation_id: str,
+    iac_updater_private_key_path: str
+) -> None:
 
     # Create a temporary workspace directory
     workspace_dir: str | None = None
@@ -226,10 +249,6 @@ def main():
     project_dir: str = os.path.join(workspace_dir, "homelab")
     logger.info(f"Using workspace directory: {workspace_dir}")
     _ = git(["clone", GIT_REPO_URL, project_dir], workspace_dir)
-
-    # Authenticate
-    sid: str = auth(pi_hole_password)
-    logger.info(f"Authenticated with SID: {sid}")
 
     # Get and process Pi-hole domains
     logging.info("Processing Pi-hole domains...")
@@ -278,6 +297,91 @@ def main():
     # Cleanup the workspace directory
     logging.info("Cleaning up workspace directory...")
     shutil.rmtree(workspace_dir)
+
+
+def update_pi_hole_configuration(sid: str) -> None:
+    role_id: str | None = None
+    secret_id: str | None = None
+
+    # Get the Pi-hole configuration
+    config: JSON = get("config", sid)
+    config = cast(JSON, config["config"])
+    config_dhcp: JSON = cast(JSON, config["dhcp"])
+    config_dns: JSON = cast(JSON, config["dns"])
+    pi_hole_configuration: JSON = {
+        'config': {
+            'dhcp': {
+                'active': config_dhcp["active"],
+                'end': config_dhcp["end"],
+                'hosts': config_dhcp["hosts"],
+                'router': config_dhcp["router"],
+                'start': config_dhcp["start"]
+            },
+            'dns': {
+                'hosts': config_dns["hosts"],
+                'upstreams': config_dns["upstreams"]
+            }
+        }
+    }
+
+    # Get the IaC Updater AppRole credentials
+    with open(f"{os.getenv("HOME")}/.vault/approle-pi-hole-iac-updater.json", "r") as json_file:
+        approle_credentials: dict[str, str] = cast(dict[str, str], json.load(json_file))
+        role_id = approle_credentials["role_id"]
+        secret_id = approle_credentials["secret_id"]
+
+    # Login to Vault
+    client: hvac.Client = vault_login(vault_url="https://vault:8200", role_id=role_id, secret_id=secret_id)
+
+    # Gets the old Pi-hole configuration from Vault
+    old_pi_hole_configuration: JSON = vault_get_pi_hole_configuration(client)
+
+    # If the new configuration is different, update it in Vault
+    if pi_hole_configuration != old_pi_hole_configuration:
+        logger.info("Pi-hole configuration has changed, updating it in Vault...")
+        vault_update_pi_hole_configuration(client, pi_hole_configuration)
+        logger.info("Pi-hole configuration updated in Vault.")
+    else:
+        logger.info("Pi-hole configuration has not changed, no update needed.")
+
+
+def main():
+    global iac_updater_client_id
+    global iac_updater_installation_id
+    global iac_updater_private_key_path
+    global pi_hole_api_url
+    global pi_hole_password
+
+    iac_updater_client_id = os.getenv("IAC_UPDATER_CLIENT_ID")
+    iac_updater_installation_id = os.getenv("IAC_UPDATER_INSTALLATION_ID")
+    iac_updater_private_key_path = os.getenv(
+        "IAC_UPDATER_PRIVATE_KEY_PATH", 
+        f"{os.getenv("HOME")}/.github/iac-updater.private-key.pem"
+    )
+    if iac_updater_client_id is None:
+        raise ValueError("IAC_UPDATER_CLIENT_ID environment variable is not set!")
+    if iac_updater_installation_id is None:
+        raise ValueError("IAC_UPDATER_INSTALLATION_ID environment variable is not set!")
+    pi_hole_api_url = os.getenv("PI_HOLE_API_URL", "http://pi.hole/api")
+    pi_hole_password = os.getenv("PI_HOLE_PASSWORD")
+    if pi_hole_password is None:
+        raise ValueError("PI_HOLE_PASSWORD environment variable is not set!")
+
+
+    # Authenticate
+    sid: str = auth(pi_hole_password)
+    logger.info(f"Authenticated with SID: {sid}")
+
+    # Update domains and lists in Github repository
+    update_domains_and_lists(
+        sid,
+        iac_updater_client_id,
+        iac_updater_installation_id,
+        iac_updater_private_key_path
+    )
+
+    # Update Pi-hole configuration in Vault
+    update_pi_hole_configuration(sid)
 
 
 if __name__ == "__main__":
