@@ -44,40 +44,10 @@ pi_hole_password: str | None = None
 GIT_REPO_URL: str = "https://github.com/bgaillard/homelab.git"
 
 
-def vault_login(vault_url: str, role_id: str, secret_id: str) -> hvac.Client:
-    client: hvac.Client = hvac.Client(
-        url=vault_url,
-        # FIXME: Insecure, for testing purposes only
-        verify=False
-    )
-    approle: AppRole = cast(AppRole, client.auth.approle)
-
-    approle.login(role_id=role_id, secret_id=secret_id)  # pyright: ignore[reportUnknownMemberType]
-
-    return client
-
-def vault_get_pi_hole_configuration(client: hvac.Client) -> JSON:
-    kv: Kv = cast(Kv, client.secrets.kv)
-    kv_v2: KvV2 = cast(KvV2, kv.v2)
-
-    secret_version_response = kv_v2.read_secret_version(  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
-        mount_point='kv',
-        path='pi-hole'
-    )
-
-    return cast(JSON, secret_version_response['data']['data']['pi_hole_configuration'])
-
-def vault_update_pi_hole_configuration(client: hvac.Client, configuration: JSON) -> None:
-    kv: Kv = cast(Kv, client.secrets.kv)
-    kv_v2: KvV2 = cast(KvV2, kv.v2)
-
-    kv_v2.create_or_update_secret(  # pyright: ignore[reportUnknownMemberType]
-        mount_point='kv',
-        path='pi-hole',
-        secret={'pi_hole_configuration': configuration}
-    )
-
-def create_gh_jwt(private_key_path: str, client_id: str) -> str:
+########################################################################################################################
+# GitHub functions
+########################################################################################################################
+def github_create_jwt(private_key_path: str, client_id: str) -> str:
     # @see https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-json-web-token-jwt-for-a-github-app#example-using-python-to-generate-a-jwt
     signing_key: bytes | None = None
 
@@ -97,20 +67,7 @@ def create_gh_jwt(private_key_path: str, client_id: str) -> str:
     # Create JWT
     return jwt.encode(payload, signing_key, algorithm='RS256')
 
-
-def create_gh_token(jwt: str, installation_id: str) -> str:
-    url: str = f"https://api.github.com/app/installations/{installation_id}/access_tokens"
-    headers: dict[str, str] = {
-        "Authorization": f"Bearer {jwt}",
-        "Accept": "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28"
-    }
-    response = requests.post(url, headers=headers)
-    response.raise_for_status()
-    return cast(str, cast(JSON, response.json())["token"])
-
-
-def create_pr(token: str, title: str, body: str, head: str, base: str) -> JSON:
+def github_create_pr(token: str, title: str, body: str, head: str, base: str) -> JSON:
     url: str = "https://api.github.com/repos/bgaillard/homelab/pulls"
     headers: dict[str, str] = {
         "Authorization": f"Bearer {token}",
@@ -134,6 +91,18 @@ def create_pr(token: str, title: str, body: str, head: str, base: str) -> JSON:
         logger.error(f"Response: {response.text}")
         raise
     return cast(JSON, response.json())
+
+def github_create_token(jwt: str, installation_id: str) -> str:
+    url: str = f"https://api.github.com/app/installations/{installation_id}/access_tokens"
+    headers: dict[str, str] = {
+        "Authorization": f"Bearer {jwt}",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28"
+    }
+    response = requests.post(url, headers=headers)
+    response.raise_for_status()
+    return cast(str, cast(JSON, response.json())["token"])
+
 
 
 def git(args: list[str], cwd: str, check: bool = True) -> CompletedProcess[str]:
@@ -162,14 +131,16 @@ def run(args: list[str], cwd: str, check: bool = True, env: dict[str, str] | Non
     return completed_process
 
 
-def get(endpoint: str, sid: str) -> JSON:
+########################################################################################################################
+# Pi-hole functions
+########################################################################################################################
+def pi_hole_get(endpoint: str, sid: str) -> JSON:
     """Make a GET request to the Pi-hole API."""
     response = requests.get(f"{pi_hole_api_url}/{endpoint}?sid={sid}")
     response.raise_for_status()
     return cast(JSON, response.json())
 
-
-def post(endpoint: str, data: JSON) -> JSON:
+def pi_hole_post(endpoint: str, data: JSON) -> JSON:
     """Make a POST request to the Pi-hole API."""
     url = f"{pi_hole_api_url}/{endpoint}"
     headers = {"Content-Type": "application/json"}
@@ -177,10 +148,9 @@ def post(endpoint: str, data: JSON) -> JSON:
     response.raise_for_status()
     return cast(JSON, response.json())
 
-
-def auth(pi_hole_password: str) -> str:
+def pi_hole_auth(pi_hole_password: str) -> str:
     """Authenticate with the Pi-hole API and return the session ID."""
-    response: JSON = post("auth", {"password": pi_hole_password})
+    response: JSON = pi_hole_post("auth", {"password": pi_hole_password})
     return cast(str, cast(JSON, response["session"])["sid"])
 
 
@@ -252,14 +222,14 @@ def update_domains_and_lists(
 
     # Get and process Pi-hole domains
     logging.info("Processing Pi-hole domains...")
-    domains: list[PiHoleDomain] = cast(list[PiHoleDomain], get("domains", sid)["domains"])
+    domains: list[PiHoleDomain] = cast(list[PiHoleDomain], pi_hole_get("domains", sid)["domains"])
     domains = process_domains(domains)
     with open(os.path.join(project_dir, "ansible/pi-hole-domains.yml"), "w") as file:
         yaml.dump({"pi_hole_domains": domains}, file)
 
     # Get and process Pi-hole lists
     logging.info("Processing Pi-hole lists...")
-    lists: list[PiHoleList] = cast(list[PiHoleList], get("lists", sid)["lists"])
+    lists: list[PiHoleList] = cast(list[PiHoleList], pi_hole_get("lists", sid)["lists"])
     lists = process_lists(lists)
     with open(os.path.join(project_dir, "ansible/pi-hole-lists.yml"), "w") as file:
         yaml.dump({"pi_hole_lists": lists}, file)
@@ -270,9 +240,9 @@ def update_domains_and_lists(
 
     # Get a Github token to then create a PR as the IaC Updater Github App
     logging.info("Creating a JWT for the IaC Updater Github App...")
-    jwt: str = create_gh_jwt(iac_updater_private_key_path, iac_updater_client_id)
+    jwt: str = github_create_jwt(iac_updater_private_key_path, iac_updater_client_id)
     logging.info("Creating token for the IaC Updater Github App installation...")
-    github_app_token: str = create_gh_token(jwt, iac_updater_installation_id)
+    github_app_token: str = github_create_token(jwt, iac_updater_installation_id)
 
     # If there are changes commit and push
     if "M ansible/pi-hole-" in completed_process.stdout:
@@ -284,7 +254,7 @@ def update_domains_and_lists(
         _ = git(["add", "."], project_dir)
         _ = git(["commit", "--message", "feat: Update Pi-Hole IaC"], project_dir)
         _ = git(["push", "--set-upstream", "origin", branch_name], project_dir)
-        _ = create_pr(
+        _ = github_create_pr(
             token=github_app_token,
             title="feat: Update Pi-Hole IaC",
             body="Automated update of Pi-Hole domains and lists.",
@@ -304,7 +274,7 @@ def update_pi_hole_configuration(sid: str) -> None:
     secret_id: str | None = None
 
     # Get the Pi-hole configuration
-    config: JSON = get("config", sid)
+    config: JSON = pi_hole_get("config", sid)
     config = cast(JSON, config["config"])
     config_dhcp: JSON = cast(JSON, config["dhcp"])
     config_dns: JSON = cast(JSON, config["dns"])
@@ -345,6 +315,43 @@ def update_pi_hole_configuration(sid: str) -> None:
         logger.info("Pi-hole configuration has not changed, no update needed.")
 
 
+########################################################################################################################
+# Vault functions
+########################################################################################################################
+def vault_get_pi_hole_configuration(client: hvac.Client) -> JSON:
+    kv: Kv = cast(Kv, client.secrets.kv)
+    kv_v2: KvV2 = cast(KvV2, kv.v2)
+
+    secret_version_response = kv_v2.read_secret_version(  # pyright: ignore[reportUnknownMemberType, reportUnknownVariableType]
+        mount_point='kv',
+        path='pi-hole'
+    )
+
+    return cast(JSON, secret_version_response['data']['data']['pi_hole_configuration'])
+
+def vault_login(vault_url: str, role_id: str, secret_id: str) -> hvac.Client:
+    client: hvac.Client = hvac.Client(
+        url=vault_url,
+        # FIXME: Insecure, for testing purposes only
+        verify=False
+    )
+    approle: AppRole = cast(AppRole, client.auth.approle)
+
+    approle.login(role_id=role_id, secret_id=secret_id)  # pyright: ignore[reportUnknownMemberType]
+
+    return client
+
+def vault_update_pi_hole_configuration(client: hvac.Client, configuration: JSON) -> None:
+    kv: Kv = cast(Kv, client.secrets.kv)
+    kv_v2: KvV2 = cast(KvV2, kv.v2)
+
+    kv_v2.create_or_update_secret(  # pyright: ignore[reportUnknownMemberType]
+        mount_point='kv',
+        path='pi-hole',
+        secret={'pi_hole_configuration': configuration}
+    )
+
+
 def main():
     global iac_updater_client_id
     global iac_updater_installation_id
@@ -369,7 +376,7 @@ def main():
 
 
     # Authenticate
-    sid: str = auth(pi_hole_password)
+    sid: str = pi_hole_auth(pi_hole_password)
     logger.info(f"Authenticated with SID: {sid}")
 
     # Update domains and lists in Github repository
