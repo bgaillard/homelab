@@ -26,6 +26,13 @@
     mode: u=rx
     force: true
 
+- name: Copy file '~/.local/bin/restic-vault'
+  ansible.builtin.copy:
+    src: home/baptiste/.local/bin/restic-vault
+    dest: "{{ ansible_facts['env']['HOME'] }}/.local/bin/restic-vault"
+    mode: u=rx
+    force: true
+
 - name: Render the '~/.local/bin/restic-with-bucket' script
   ansible.builtin.template:
     src: home/baptiste/.local/bin/restic-with-bucket.j2
@@ -71,6 +78,28 @@
   ansible.builtin.cron:
     name: "Backup with restic-pi-hole"
     job: "{{ ansible_facts['env']['HOME'] }}/.local/bin/restic-pi-hole backup /srv/backups/pi-hole >> /var/log/restic-pi-hole/restic-pi-hole.log 2>&1"
+    state: present
+    user: "{{ ansible_facts['env']['USER'] }}"
+    minute: "0"
+    hour: "1"
+    weekday: "*"
+    month: "*"
+    day: "*"
+
+- name: Create the '/var/log/restic-vault/' directory if it does not exist
+  become: true
+  ansible.builtin.file:
+    path: "/var/log/restic-vault/"
+    state: directory
+    owner: "{{ ansible_facts['env']['USER'] }}"
+    group: "{{ ansible_facts['env']['USER'] }}"
+    mode: '0700'
+
+- name: Configure the 'restic-vault' cron job
+  become: true
+  ansible.builtin.cron:
+    name: "Backup with restic-vault"
+    job: "{{ ansible_facts['env']['HOME'] }}/.local/bin/restic-vault backup /srv/backups/vault >> /var/log/restic-vault/restic-vault.log 2>&1"
     state: present
     user: "{{ ansible_facts['env']['USER'] }}"
     minute: "0"

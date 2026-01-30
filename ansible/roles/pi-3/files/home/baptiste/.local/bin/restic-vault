@@ -1,0 +1,9 @@
+#!/bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# The restic repository has been manually initialized with the following command:
+#
+#   restic-vault init
+#
+BUCKET_NAME=vault "${DIR}/restic-with-bucket" "$@"
