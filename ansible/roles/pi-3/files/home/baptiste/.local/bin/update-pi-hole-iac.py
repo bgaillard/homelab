@@ -41,12 +41,27 @@ pi_hole_api_url: str | None = None
 pi_hole_password: str | None = None
 
 # Github repository URL
-GIT_REPO_URL: str = "https://github.com/bgaillard/homelab.git"
+GITHUB_USER: str = "bgaillard"
+GITHUB_REPO: str = "homelab"
+GIT_REPO_URL: str = f"https://github.com/{GITHUB_USER}/{GITHUB_REPO}.git"
+
+# VAULT
+VAULT_ADDR: str = os.getenv("VAULT_ADDR", "https://vault:8200")
 
 
 ########################################################################################################################
 # GitHub functions
 ########################################################################################################################
+def github_create_api_headers(token: str) -> dict[str, str]:
+    return {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28"
+    }
+
+def github_create_api_url(endpoint: str) -> str:
+    return f"https://api.github.com/{endpoint}"
+
 def github_create_jwt(private_key_path: str, client_id: str) -> str:
     # @see https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-json-web-token-jwt-for-a-github-app#example-using-python-to-generate-a-jwt
     signing_key: bytes | None = None
@@ -59,7 +74,6 @@ def github_create_jwt(private_key_path: str, client_id: str) -> str:
         'iat': int(time.time()),
         # JWT expiration time (10 minutes maximum)
         'exp': int(time.time()) + 600,
-        
         # GitHub App's client ID
         'iss': client_id
     }
@@ -68,15 +82,9 @@ def github_create_jwt(private_key_path: str, client_id: str) -> str:
     return jwt.encode(payload, signing_key, algorithm='RS256')
 
 def github_create_pr(token: str, title: str, body: str, head: str, base: str) -> JSON:
-    url: str = "https://api.github.com/repos/bgaillard/homelab/pulls"
-    headers: dict[str, str] = {
-        "Authorization": f"Bearer {token}",
-        "Accept": "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28"
-    }
     response = requests.post(
-        url, 
-        headers=headers, 
+        github_create_api_url(f"repos/{GITHUB_USER}/{GITHUB_REPO}/pulls"), 
+        headers=github_create_api_headers(token),
         json={
             "title": title,
             "body": body,
@@ -93,16 +101,12 @@ def github_create_pr(token: str, title: str, body: str, head: str, base: str) ->
     return cast(JSON, response.json())
 
 def github_create_token(jwt: str, installation_id: str) -> str:
-    url: str = f"https://api.github.com/app/installations/{installation_id}/access_tokens"
-    headers: dict[str, str] = {
-        "Authorization": f"Bearer {jwt}",
-        "Accept": "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28"
-    }
-    response = requests.post(url, headers=headers)
+    response = requests.post(
+        github_create_api_url(f"app/installations/{installation_id}/access_tokens"), 
+        headers=github_create_api_headers(jwt)
+    )
     response.raise_for_status()
     return cast(str, cast(JSON, response.json())["token"])
-
 
 
 def git(args: list[str], cwd: str, check: bool = True) -> CompletedProcess[str]:
@@ -301,7 +305,7 @@ def update_pi_hole_configuration(sid: str) -> None:
         secret_id = approle_credentials["secret_id"]
 
     # Login to Vault
-    client: hvac.Client = vault_login(vault_url="https://vault:8200", role_id=role_id, secret_id=secret_id)
+    client: hvac.Client = vault_login(vault_addr=VAULT_ADDR, role_id=role_id, secret_id=secret_id)
 
     # Gets the old Pi-hole configuration from Vault
     old_pi_hole_configuration: JSON = vault_get_pi_hole_configuration(client)
@@ -329,9 +333,9 @@ def vault_get_pi_hole_configuration(client: hvac.Client) -> JSON:
 
     return cast(JSON, secret_version_response['data']['data']['pi_hole_configuration'])
 
-def vault_login(vault_url: str, role_id: str, secret_id: str) -> hvac.Client:
+def vault_login(vault_addr: str, role_id: str, secret_id: str) -> hvac.Client:
     client: hvac.Client = hvac.Client(
-        url=vault_url,
+        url=vault_addr,
         # FIXME: Insecure, for testing purposes only
         verify=False
     )
