@@ -1,2 +1,4 @@
 # HashiCorp Vault configuration
+vault_tls_cert: "xxxxxxxx"
+vault_tls_key: "xxxxxxxx"
 vault_version: "1.21.2"

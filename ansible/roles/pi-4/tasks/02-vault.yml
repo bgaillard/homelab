@@ -31,6 +31,24 @@
       - vault
     state: latest
 
+- name: Copy Vault TLS certificate
+  become: true
+  ansible.builtin.copy:
+    content: "{{ vault_tls_cert }}"
+    dest: /opt/vault/tls/tls.crt
+    owner: vault
+    group: vault
+    mode: '0600'
+
+- name: Copy Vault TLS private key
+  become: true
+  ansible.builtin.copy:
+    content: "{{ vault_tls_key }}"
+    dest: /opt/vault/tls/tls.key
+    owner: vault
+    group: vault
+    mode: '0600'
+
 - name: Enable the 'vault' service
   become: true
   ansible.builtin.systemd:

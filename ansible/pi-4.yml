@@ -12,4 +12,6 @@
               ip_address: "{{ lookup('community.general.bitwarden', '5f23f062-c642-4c10-8c57-b3dc01505dd6', search='id', field='ipAddress') | first }}"
     - role: pi-4
       vars:
+        vault_tls_cert: "{{ lookup('community.general.bitwarden', '5f23f062-c642-4c10-8c57-b3dc01505dd6', search='id', field='vaultTLSCertificate') | first | replace('-----BEGIN CERTIFICATE-----', '__BC__') | replace('-----END CERTIFICATE-----', '__EC__') | replace(' ', '\n') | replace('__BC__', '-----BEGIN CERTIFICATE-----') | replace('__EC__', '-----END CERTIFICATE-----') }}"
+        vault_tls_key: "{{ lookup('community.general.bitwarden', '5f23f062-c642-4c10-8c57-b3dc01505dd6', search='id', field='vaultTLSPrivateKey') | first | replace('-----BEGIN PRIVATE KEY-----', '__BK__') | replace('-----END PRIVATE KEY-----', '__EK__') | replace(' ', '\n') | replace('__BK__', '-----BEGIN PRIVATE KEY-----') | replace('__EK__', '-----END PRIVATE KEY-----') }}"
         vault_version: "1.21.2"
