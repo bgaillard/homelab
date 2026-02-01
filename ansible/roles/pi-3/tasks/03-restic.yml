@@ -52,11 +52,12 @@
       job: "{{ ansible_facts['env']['HOME'] }}/.local/bin/restic-{{ bucket_name }} backup /srv/backups/{{ bucket_name }} >> /var/log/restic-{{ bucket_name }}/restic-{{ bucket_name }}.log 2>&1"
       state: present
       user: "{{ ansible_facts['env']['USER'] }}"
-      minute: "0"
+      minute: "{{ bucket_index * 2 }}"
       hour: "1"
       weekday: "*"
       month: "*"
       day: "*"
     loop: "{{ restic_bucket_names }}"
     loop_control:
+      index_var: bucket_index
       loop_var: bucket_name
