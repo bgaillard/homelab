@@ -1,9 +1,0 @@
-#!/bin/bash
-
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-# The restic repository has been manually initialized with the following command:
-#
-#   restic-k8s-etcd init
-#
-BUCKET_NAME=k8s-etcd "${DIR}/restic-with-bucket" "$@"

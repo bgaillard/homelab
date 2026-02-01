@@ -4,6 +4,6 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # The restic repository has been manually initialized with the following command:
 #
-#   restic-pi-hole init
+#   restic-{{ bucket_name }} init
 #
-BUCKET_NAME=pi-hole "${DIR}/restic-with-bucket" "$@"
+BUCKET_NAME="{{ bucket_name }}" "${DIR}/restic-with-bucket" "$@"

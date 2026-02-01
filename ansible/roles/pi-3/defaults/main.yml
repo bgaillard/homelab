@@ -32,4 +32,5 @@ swiss_backup_password: "password"
 swiss_backup_user_name: "username"
 
 # Restic configuration
+restic_bucket_names: []
 restic_password: "restic_password"

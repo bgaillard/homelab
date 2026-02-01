@@ -12,27 +12,6 @@
     state: directory
     mode: '0700'
 
-- name: Copy file '~/.local/bin/restic-k8s-etcd'
-  ansible.builtin.copy:
-    src: home/baptiste/.local/bin/restic-k8s-etcd
-    dest: "{{ ansible_facts['env']['HOME'] }}/.local/bin/restic-k8s-etcd"
-    mode: u=rx
-    force: true
-
-- name: Copy file '~/.local/bin/restic-pi-hole'
-  ansible.builtin.copy:
-    src: home/baptiste/.local/bin/restic-pi-hole
-    dest: "{{ ansible_facts['env']['HOME'] }}/.local/bin/restic-pi-hole"
-    mode: u=rx
-    force: true
-
-- name: Copy file '~/.local/bin/restic-vault'
-  ansible.builtin.copy:
-    src: home/baptiste/.local/bin/restic-vault
-    dest: "{{ ansible_facts['env']['HOME'] }}/.local/bin/restic-vault"
-    mode: u=rx
-    force: true
-
 - name: Render the '~/.local/bin/restic-with-bucket' script
   ansible.builtin.template:
     src: home/baptiste/.local/bin/restic-with-bucket.j2
@@ -41,69 +20,43 @@
     group: "{{ ansible_facts['env']['USER'] }}"
     mode: u=rx
 
+- name: Configure Restic backups
+  block:
+  - name: Render the '~/.local/bin/restic-{bucket_name}' scripts
+    ansible.builtin.template:
+      src: home/baptiste/.local/bin/restic-shortcut.j2
+      dest: "{{ ansible_facts['env']['HOME'] }}/.local/bin/restic-{{ bucket_name }}"
+      owner: "{{ ansible_facts['env']['USER'] }}"
+      group: "{{ ansible_facts['env']['USER'] }}"
+      mode: u=rx
+    loop: "{{ restic_bucket_names }}"
+    loop_control:
+      loop_var: bucket_name
 
-- name: Create the '/var/log/restic-k8s-etcd/' directory if it does not exist
-  become: true
-  ansible.builtin.file:
-    path: "/var/log/restic-k8s-etcd/"
-    state: directory
-    owner: "{{ ansible_facts['env']['USER'] }}"
-    group: "{{ ansible_facts['env']['USER'] }}"
-    mode: '0700'
+  - name: Create the '/var/log/restic-{bucket_name}/' directory if it does not exist
+    become: true
+    ansible.builtin.file:
+      path: "/var/log/restic-{{ bucket_name }}/"
+      state: directory
+      owner: "{{ ansible_facts['env']['USER'] }}"
+      group: "{{ ansible_facts['env']['USER'] }}"
+      mode: '0700'
+    loop: "{{ restic_bucket_names }}"
+    loop_control:
+      loop_var: bucket_name
 
-- name: Configure the 'restic-k8s-etcd' cron job
-  become: true
-  ansible.builtin.cron:
-    name: "Backup with restic-k8s-etcd"
-    job: "{{ ansible_facts['env']['HOME'] }}/.local/bin/restic-k8s-etcd backup /srv/backups/k8s-etcd >> /var/log/restic-k8s-etcd/restic-k8s-etcd.log 2>&1"
-    state: present
-    user: "{{ ansible_facts['env']['USER'] }}"
-    minute: "0"
-    hour: "1"
-    weekday: "*"
-    month: "*"
-    day: "*"
-
-- name: Create the '/var/log/restic-pi-hole/' directory if it does not exist
-  become: true
-  ansible.builtin.file:
-    path: "/var/log/restic-pi-hole/"
-    state: directory
-    owner: "{{ ansible_facts['env']['USER'] }}"
-    group: "{{ ansible_facts['env']['USER'] }}"
-    mode: '0700'
-
-- name: Configure the 'restic-pi-hole' cron job
-  become: true
-  ansible.builtin.cron:
-    name: "Backup with restic-pi-hole"
-    job: "{{ ansible_facts['env']['HOME'] }}/.local/bin/restic-pi-hole backup /srv/backups/pi-hole >> /var/log/restic-pi-hole/restic-pi-hole.log 2>&1"
-    state: present
-    user: "{{ ansible_facts['env']['USER'] }}"
-    minute: "0"
-    hour: "1"
-    weekday: "*"
-    month: "*"
-    day: "*"
-
-- name: Create the '/var/log/restic-vault/' directory if it does not exist
-  become: true
-  ansible.builtin.file:
-    path: "/var/log/restic-vault/"
-    state: directory
-    owner: "{{ ansible_facts['env']['USER'] }}"
-    group: "{{ ansible_facts['env']['USER'] }}"
-    mode: '0700'
-
-- name: Configure the 'restic-vault' cron job
-  become: true
-  ansible.builtin.cron:
-    name: "Backup with restic-vault"
-    job: "{{ ansible_facts['env']['HOME'] }}/.local/bin/restic-vault backup /srv/backups/vault >> /var/log/restic-vault/restic-vault.log 2>&1"
-    state: present
-    user: "{{ ansible_facts['env']['USER'] }}"
-    minute: "0"
-    hour: "1"
-    weekday: "*"
-    month: "*"
-    day: "*"
+  - name: Configure the 'restic-{bucket_name}' cron job
+    become: true
+    ansible.builtin.cron:
+      name: "Backup with restic-{{ bucket_name }}"
+      job: "{{ ansible_facts['env']['HOME'] }}/.local/bin/restic-{{ bucket_name }} backup /srv/backups/{{ bucket_name }} >> /var/log/restic-{{ bucket_name }}/restic-{{ bucket_name }}.log 2>&1"
+      state: present
+      user: "{{ ansible_facts['env']['USER'] }}"
+      minute: "0"
+      hour: "1"
+      weekday: "*"
+      month: "*"
+      day: "*"
+    loop: "{{ restic_bucket_names }}"
+    loop_control:
+      loop_var: bucket_name
