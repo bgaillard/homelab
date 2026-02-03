@@ -1,4 +1,14 @@
 ---
+# TLS certificates to be trusted, those certificates will be copied to the
+# '/usr/local/share/ca-certificates/' folder and then the 'update-ca-certificates'
+# command will be executed.
+certs: []
+  # - file_name: "tls.crt"
+  #   content: |
+  #     -----BEGIN CERTIFICATE-----
+  #     MIID...
+  #     -----END CERTIFICATE-----
+
 # Servers do no need several Linux services running by default.
 #
 # Please note that not useful network services are disabled through the '04-network.yml' file.

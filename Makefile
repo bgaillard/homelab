@@ -1,5 +1,7 @@
 SHELL := /bin/bash
 
+export REQUESTS_CA_BUNDLE := /etc/ssl/certs/ca-certificates.crt
+
 ansible: ## Run Ansible playbook
 	@ansible-playbook --inventory ansible/hosts.yml ansible/site.yml
 

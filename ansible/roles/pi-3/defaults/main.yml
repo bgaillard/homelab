@@ -34,3 +34,8 @@ swiss_backup_user_name: "username"
 # Restic configuration
 restic_bucket_names: []
 restic_password: "restic_password"
+
+vault_tls_cert: |
+  -----BEGIN CERTIFICATE-----
+  MIID...
+  -----END CERTIFICATE-----

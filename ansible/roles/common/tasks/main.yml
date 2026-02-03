@@ -39,3 +39,4 @@
 - import_tasks: 04-disable-wifi.yml
 - import_tasks: 05-network.yml
 - import_tasks: 06-mount-srv-backups.yml
+- import_tasks: 07-update-ca-certificates.yml
