@@ -21,9 +21,8 @@
   ansible.builtin.pip:
     break_system_packages: true
     name:
-      # Required by the 'community.hashi_vault.vault_read' module
-      - hvac
       # Required by the 'update-pi-hole-iac.py' script
+      - hvac
       - PyJWT
       - cryptography
     executable: pip3
@@ -32,6 +31,7 @@
 - name: Configure the 'pi-hole-iac-updater' Vault AppRole role
   block:
     - name: Create the 'pi-hole-iac-updater' Vault policy
+      delegate_to: localhost
       community.hashi_vault.vault_write:
         token: "{{ lookup('env', 'VAULT_TOKEN') }}"
         url: "{{ lookup('env', 'VAULT_ADDR') }}"
@@ -43,6 +43,7 @@
             }
 
     - name: Create or update the 'pi-hole-iac-updater' Vault AppRole role
+      delegate_to: localhost
       community.hashi_vault.vault_write:
         token: "{{ lookup('env', 'VAULT_TOKEN') }}"
         url: "{{ lookup('env', 'VAULT_ADDR') }}"
@@ -65,6 +66,7 @@
           token_type: "batch"
 
     - name: Get the 'pi-hole-iac-updater' Vault AppRole role ID
+      delegate_to: localhost
       community.hashi_vault.vault_read:
         token: "{{ lookup('env', 'VAULT_TOKEN') }}"
         url: "{{ lookup('env', 'VAULT_ADDR') }}"
@@ -72,6 +74,7 @@
       register: vault_pi_hole_iac_updater_approle_role_id
 
     - name: List the secret ID accessors for the 'pi-hole-iac-updater' Vault AppRole
+      delegate_to: localhost
       community.hashi_vault.vault_list:
         token: "{{ lookup('env', 'VAULT_TOKEN') }}"
         url: "{{ lookup('env', 'VAULT_ADDR') }}"
@@ -79,6 +82,7 @@
       register: vault_pi_hole_iac_updater_approle_secret_id_accessors
 
     - name: Cleanup all the secret IDs
+      delegate_to: localhost
       community.hashi_vault.vault_write:
         token: "{{ lookup('env', 'VAULT_TOKEN') }}"
         url: "{{ lookup('env', 'VAULT_ADDR') }}"
@@ -88,6 +92,7 @@
       loop: "{{ vault_pi_hole_iac_updater_approle_secret_id_accessors.data.data.get('keys') }}"
 
     - name: Generate a new secret ID for the 'pi-hole-iac-updater' Vault AppRole
+      delegate_to: localhost
       community.hashi_vault.vault_write:
         token: "{{ lookup('env', 'VAULT_TOKEN') }}"
         url: "{{ lookup('env', 'VAULT_ADDR') }}"
