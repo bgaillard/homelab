@@ -22,7 +22,7 @@ incus file pull --project ${INCUS_PROJECT} --recursive --create-dirs \
   "${ETCD_NODE_HOSTNAME}/tmp/${ETCD_SNAPSHOT_FILE}" "${BACKUP_DIR}/${ETCD_SNAPSHOT_FILE}"
 
 # Ensure we never have more than 7 snapshots
-find "${BACKUPS_DIR}" -type f -name "etcd-snapshot-*.db" -printf '%T+ %p\n' | sort | head -n -7 | awk '{print $2}' | xargs -I {} rm {}
+find "${BACKUP_DIR}" -type f -name "etcd-snapshot-*.db" -printf '%T+ %p\n' | sort | head -n -7 | awk '{print $2}' | xargs -I {} rm {}
 
 # Remove the snapshot from the homelab server
 incus exec --project "${INCUS_PROJECT}" "${ETCD_NODE_HOSTNAME}" -- rm "/tmp/${ETCD_SNAPSHOT_FILE}"

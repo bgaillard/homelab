@@ -15,9 +15,21 @@ theme:
   #name: readthedocs
   name: material
   features:
+    - content.code.copy
+    - content.code.select
     - header.autohide
   palette:
     scheme: slate
+
+markdown_extensions:
+  # @see https://squidfunk.github.io/mkdocs-material/reference/code-blocks/
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
 
 watch:
   - "docs/index.md"

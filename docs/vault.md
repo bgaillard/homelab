@@ -29,13 +29,6 @@ openssl req \
     echo subjectAltName=DNS:vault
     ) \
     -subj "/CN=vault"
-
-# For each client, copy the public certificate
-sudo cp vault-pi-4.crt /etc/ssl/certs/
-sudo chmod 400 /etc/ssl/certs/vault-pi-4.crt
-
-# Update the certificate trust store
-sudo update-ca-certificates
-
-# Add it to Bitwarden and import it in your browser as a trusted authority
 ```
+
+The certificate and it's private key are then stored in Bitwarden for future reference and usage in Ansible.

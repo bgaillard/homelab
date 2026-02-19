@@ -54,6 +54,7 @@
         restic_bucket_names:
           - k8s-etcd
           - pi-hole
+          - thunderbird
           - vault
         restic_password: "{{ lookup('community.general.bitwarden', 'b3a24bd2-c777-4556-9f07-b39200acc70a', search='id', field='resticPassword') | first }}"
     - wireguard

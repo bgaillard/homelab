@@ -5,8 +5,7 @@
 
 ```bash
 # Install required Python packages
-python -m pip install --user ansible
-python -m pip install --user hvac
+python -m pip install --user ansible hvac mkdocs mkdocs-material
 
 # If Ansible is already installed but python has been updated, you may need to reinstall Ansible
 python -m pip install --user --upgrade ansible

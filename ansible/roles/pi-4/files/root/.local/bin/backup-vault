@@ -32,7 +32,7 @@ tar -czf "${BACKUP_DIR}/vault-${TIMESTAMP}.tar.gz" -C "${TMP_BACKUP_DIR}" .
 
 # Ensure we never have more than 7 snapshots
 echo "Keeping only last 7 backups..."
-find "${BACKUPS_DIR}" -type f -name "vault-*.tar.gz" -printf '%T+ %p\n' | sort | head -n -7 | awk '{print $2}' | xargs -I {} rm {}
+find "${BACKUP_DIR}" -type f -name "vault-*.tar.gz" -printf '%T+ %p\n' | sort | head -n -7 | awk '{print $2}' | xargs -I {} rm {}
 
 # Remove the backup from the temporary location
 echo "Cleaning up temporary files..."
