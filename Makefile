@@ -17,7 +17,7 @@ ansible-pi-4: ## Run Ansible playbook playbook only for the Raspberry Pi 4
 .PHONY: ansible ansible-inspiron-3847 ansible-pi-3
 
 doc-serve: ## Serve documentation with live reload
-	@mkdocs serve --open --livereload
+	@uv run zensical serve --open
 
 packer-k8s-control-plane-build: ## Build K8s Control Plane Packer image
 	@cd packer/k8s/control-plane && make build
