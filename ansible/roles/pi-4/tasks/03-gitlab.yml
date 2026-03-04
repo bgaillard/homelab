@@ -1,0 +1,74 @@
+---
+# @see https://docs.gitlab.com/install/package/debian/
+- name: Check the Gitlab CE keyring file
+  ansible.builtin.stat:
+    path: /usr/share/keyrings/gitlab_gitlab-ce-archive-keyring.gpg
+  register: gitlab_keyring_file
+
+- name: Add Gitlab CE keyring directory
+  ansible.builtin.shell:
+    cmd: wget -O - https://packages.gitlab.com/gitlab/gitlab-ce/gpgkey | gpg --dearmor --yes -o /usr/share/keyrings/gitlab_gitlab-ce-archive-keyring.gpg
+  become: true
+  when: not gitlab_keyring_file.stat.exists
+
+- name: Add Gitlab CE APT repository
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=arm64 signed-by=/usr/share/keyrings/gitlab_gitlab-ce-archive-keyring.gpg] https://packages.gitlab.com/gitlab/gitlab-ce/debian/ trixie main"
+    state: present
+    filename: gitlab_gitlab-ce
+    update_cache: no
+
+- name: Update apt cache
+  become: true
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install 'gitlab-ce' Linux package
+  become: true
+  ansible.builtin.package:
+    name:
+      - gitlab-ce
+    state: latest
+
+# @see https://docs.gitlab.com/omnibus/settings/configuration/#configure-the-external-url-for-gitlab
+- name: Configure the 'external_url' property in '/etc/gitlab/gitlab.rb'
+  become: true
+  ansible.builtin.replace:
+    path: /etc/gitlab/gitlab.rb
+    regexp: '^external_url\s+(.*)$'
+    replace: "external_url '{{ gitlab_external_url }}'"
+
+# @see https://docs.gitlab.com/omnibus/settings/ssl/#configure-https-manually
+- name: Configure the 'letsencrypt' property in '/etc/gitlab/gitlab.rb'
+  become: true
+  ansible.builtin.replace:
+    path: /etc/gitlab/gitlab.rb
+    regexp: '^#\s+letsencrypt\[.{1}enable.{1}\] = (.*)$'
+    replace: "letsencrypt['enable'] = false"
+
+- name: Create the '/etc/gitlab/ssl' directory
+  become: true
+  ansible.builtin.file:
+    path: /etc/gitlab/ssl
+    state: directory
+    mode: '0755'
+
+- name: Copy Gitlab CE TLS certificate
+  become: true
+  ansible.builtin.copy:
+    content: "{{ gitlab_tls_cert }}"
+    dest: /etc/gitlab/ssl/gitlab.crt
+    mode: '0644'
+
+- name: Copy Gitlab CE TLS private key
+  become: true
+  ansible.builtin.copy:
+    content: "{{ gitlab_tls_key }}"
+    dest: /etc/gitlab/ssl/gitlab.key
+    mode: '0600'
+
+- name: Reconfigure Gitlab CE
+  become: true
+  ansible.builtin.command:
+    cmd: gitlab-ctl reconfigure

@@ -2,6 +2,7 @@ site_name: "Homelab"
 repo_url: "https://github.com/bgaillard/homelab"
 nav:
   - Introduction: index.md
+  - Gitlab: gitlab.md
   - Kubernetes: kubernetes.md
   - Incus: incus.md
   - Pi-hole: pi-hole.md

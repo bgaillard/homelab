@@ -1,4 +1,9 @@
-# HashiCorp Vault configuration
+# Gitlab CE
+gitlab_tls_cert: "xxxxxxxx"
+gitlab_tls_key: "xxxxxxxx"
+gitlab_external_url: "https://gitlab"
+
+# HashiCorp Vault
 vault_tls_cert: "xxxxxxxx"
 vault_tls_key: "xxxxxxxx"
 vault_version: "1.21.2"
