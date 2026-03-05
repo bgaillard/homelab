@@ -1,0 +1,39 @@
+---
+# Use the following command to get the current applied journald configuration:
+#
+#   systemd-analyze cat-config systemd/journald.conf
+#
+- name: Create the '/etc/systemd/journald.conf.d' directory
+  become: true
+  ansible.builtin.file:
+    path: "/etc/systemd/journald.conf.d"
+    state: directory
+    mode: '0755'
+
+- name: Create the 'journald.conf' file
+  become: true
+  ansible.builtin.copy:
+    src: etc/systemd/journald.conf.d/60-journald.conf
+    dest: "/etc/systemd/journald.conf.d/60-journald.conf"
+    owner: root
+    group: root
+    mode: 644
+
+- name: Restart the 'systemd-journald' service to apply changes
+  become: true
+  ansible.builtin.systemd:
+    name: systemd-journald
+    state: restarted
+
+- name: Check if the '/usr/lib/systemd/journald.conf.d/40-rpi-volatile-storage.conf' file exists
+  ansible.builtin.stat:
+    path: "/usr/lib/systemd/journald.conf.d/40-rpi-volatile-storage.conf"
+  register: journald_volatile_storage_conf
+
+- name: Update the 'Storage' property in the '/usr/lib/systemd/journald.conf.d/40-rpi-volatile-storage.conf' file
+  become: true
+  ansible.builtin.replace:
+    path: /usr/lib/systemd/journald.conf.d/40-rpi-volatile-storage.conf
+    regexp: '^Storage=(.*)$'
+    replace: "Storage=persistent"
+  when: journald_volatile_storage_conf.stat.exists

@@ -30,13 +30,14 @@
             },
             'wpa_ssid': '',
             'wpa_psk': ''
-          } 
+          }
         } | combine(network, recursive=True)
       }}
-- import_tasks: 01-packages.yml
-- import_tasks: 02-disable-services.yml
-- import_tasks: 03-disable-bluetooth.yml
-- import_tasks: 04-disable-wifi.yml
-- import_tasks: 05-network.yml
-- import_tasks: 06-mount-srv-backups.yml
-- import_tasks: 07-update-ca-certificates.yml
+- import_tasks: 01-journald.yml
+- import_tasks: 02-packages.yml
+- import_tasks: 03-disable-services.yml
+- import_tasks: 04-disable-bluetooth.yml
+- import_tasks: 05-disable-wifi.yml
+- import_tasks: 06-network.yml
+- import_tasks: 07-mount-srv-backups.yml
+- import_tasks: 08-update-ca-certificates.yml
