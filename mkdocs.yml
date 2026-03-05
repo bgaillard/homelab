@@ -23,7 +23,20 @@ theme:
     scheme: slate
 
 markdown_extensions:
+  ######################################################################################################################
+  # Admonitions
+  #
+  # @see https://squidfunk.github.io/mkdocs-material/reference/admonitions/
+  ######################################################################################################################
+  - admonition
+  - pymdownx.details
+
+
+  ######################################################################################################################
+  # Code blocks
+  #
   # @see https://squidfunk.github.io/mkdocs-material/reference/code-blocks/
+  ######################################################################################################################
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span

@@ -3,6 +3,15 @@
 BACKUPS_DIR="/srv/backups"
 BACKUP_DIR="${BACKUPS_DIR}/vault"
 
+# NOTE: Performing a backup of the '/opt/vault/data' directory is ok using the Hashicorp Vault community edition,
+#       assuming Vault is stopped before performing the backup to ensure data consistency.
+#
+#       A better solution with Vault community edition would be to use a Database like Consul, Amazon DynamoDB or
+#       PostgreSQL as the storage backend, which would allow us to take online backups without having to stop the Vault
+#       server and without having to create a complete Raft cluster.
+#
+#       However, if we were to use the Enterprise edition of Vault it would be better to use the snapshot commands.
+
 # Stop the Vault server before taking a backup
 # FIXME: We should migrate to a PostgreSQL backend to be able to take online backups and still avoid creating a complete
 #         Raft cluster.

@@ -31,6 +31,15 @@ packer-k8s-load-balancer-build: ## Build K8s Load Balancer Packer image
 packer-k8s-worker-build: ## Build K8s Worker Packer image
 	@cd packer/k8s/worker && make build
 
+terraform-gitlab-init: ## Initialize Gitlab Terraform
+	@cd terraform/gitlab && terraform init
+
+terraform-gitlab-plan: ## Plan Gitlab Terraform
+	@cd terraform/gitlab && terraform plan
+
+terraform-gitlab-apply: ## Apply Gitlab Terraform
+	@cd terraform/gitlab && terraform apply
+
 terraform-k8s-apply: ## Plan K8s Terraform
 	@cd terraform/k8s && terraform apply
 
