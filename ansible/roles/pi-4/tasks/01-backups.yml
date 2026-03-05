@@ -6,32 +6,53 @@
     state: directory
     mode: '0700'
 
-- name: Copy file '/root/.local/bin/backup-vault'
-  become: true
-  ansible.builtin.copy:
-    src: root/.local/bin/backup-vault
-    dest: "/root/.local/bin/backup-vault"
-    mode: u=rx
-    force: true
+- name: Configure backups
+  block:
+  - name: Copy files '/root/.local/bin/backup-*'
+    become: true
+    ansible.builtin.copy:
+      src: root/.local/bin/backup-{{ name }}
+      dest: "/root/.local/bin/backup-{{ name }}"
+      mode: u=rx
+      force: true
+    loop_control:
+      label: Copying file '/root/.local/bin/backup-{{ name }}'
+      loop_var: name
+    loop:
+      - gitlab
+      - vault
 
-- name: Create the '/var/log/backup-vault/' directory if it does not exist
-  become: true
-  ansible.builtin.file:
-    path: "/var/log/backup-vault/"
-    state: directory
-    owner: "{{ ansible_facts['env']['USER'] }}"
-    group: "{{ ansible_facts['env']['USER'] }}"
-    mode: '0700'
+  - name: Create the '/var/log/backup-*/' directories if they do not exist
+    become: true
+    ansible.builtin.file:
+      path: "/var/log/backup-{{ name }}/"
+      state: directory
+      owner: "{{ ansible_facts['env']['USER'] }}"
+      group: "{{ ansible_facts['env']['USER'] }}"
+      mode: '0700'
+    loop_control:
+      label: Creating log directory '/var/log/backup-{{ name }}/'
+      loop_var: name
+    loop:
+      - gitlab
+      - vault
 
-- name: Configure vault backup cron job
-  become: true
-  ansible.builtin.cron:
-    name: "Backup the Vault data"
-    job: "/root/.local/bin/backup-vault >> /var/log/backup-vault/backup-vault.log 2>&1"
-    state: present
-    user: root
-    minute: "0"
-    hour: "0"
-    weekday: "*"
-    month: "*"
-    day: "*"
+  - name: Configure backup cron job
+    become: true
+    ansible.builtin.cron:
+      name: "Backup job for '{{ name }}'"
+      job: "/root/.local/bin/backup-{{ name }} >> /var/log/backup-{{ name }}/backup-{{ name }}.log 2>&1"
+      state: present
+      user: root
+      minute: "{{ job_index * 5 }}"
+      hour: "0"
+      weekday: "*"
+      month: "*"
+      day: "*"
+    loop_control:
+      label: Configuring backup cron job for '{{ name }}'
+      index_var: job_index
+      loop_var: name
+    loop:
+      - gitlab
+      - vault

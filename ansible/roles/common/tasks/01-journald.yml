@@ -25,11 +25,12 @@
     name: systemd-journald
     state: restarted
 
+# Rasberry Pi overrides the default journald configuration to use volatile storage. It prevents our configuration to be
+# applied so we override it to use persistent storage.
 - name: Check if the '/usr/lib/systemd/journald.conf.d/40-rpi-volatile-storage.conf' file exists
   ansible.builtin.stat:
     path: "/usr/lib/systemd/journald.conf.d/40-rpi-volatile-storage.conf"
   register: journald_volatile_storage_conf
-
 - name: Update the 'Storage' property in the '/usr/lib/systemd/journald.conf.d/40-rpi-volatile-storage.conf' file
   become: true
   ansible.builtin.replace:

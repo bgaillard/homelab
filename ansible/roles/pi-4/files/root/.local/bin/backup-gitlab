@@ -1,0 +1,17 @@
+#!/bin/bash
+
+BACKUPS_DIR="/srv/backups"
+BACKUP_DIR="${BACKUPS_DIR}/gitlab"
+
+# Create the Gitlab backup
+echo "Creating Gitlab backup..."
+gitlab-backup create
+
+# Move the backup to the backup directory
+echo "Moving Gitlab backup to backup directory..."
+mkdir -p "${BACKUP_DIR}"
+mv /var/opt/gitlab/backups/* "${BACKUP_DIR}/"
+
+# Ensure we never have more than 7 backups
+echo "Keeping only last 7 backups..."
+find "${BACKUP_DIR}" -type f -name "*_gitlab_backup.tar" -printf '%T+ %p\n' | sort | head -n -7 | awk '{print $2}' | xargs -I {} rm {}
