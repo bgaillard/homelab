@@ -39,6 +39,22 @@
     regexp: '^external_url\s+(.*)$'
     replace: "external_url '{{ gitlab_external_url }}'"
 
+# @see https://docs.gitlab.com/omnibus/settings/memory_constrained_envs/#optimize-puma
+- name: Configure the "puma['worker_processes']" property in '/etc/gitlab/gitlab.rb'
+  become: true
+  ansible.builtin.replace:
+    path: /etc/gitlab/gitlab.rb
+    regexp: '^.*puma\[.{1}worker_processes.{1}\]\s*=\s*(.*)$'
+    replace: "puma['worker_processes'] = 0"
+
+# @see https://docs.gitlab.com/omnibus/settings/memory_constrained_envs/#optimize-sidekiq
+- name: Configure the "sidekiq['concurrency']" property in '/etc/gitlab/gitlab.rb'
+  become: true
+  ansible.builtin.replace:
+    path: /etc/gitlab/gitlab.rb
+    regexp: '^.*sidekiq\[.{1}concurrency.{1}\]\s*=\s*(.*)$'
+    replace: "sidekiq['concurrency'] = 10"
+
 - name: Disable several properties in '/etc/gitlab/gitlab.rb'
   become: true
   ansible.builtin.replace:
@@ -55,11 +71,31 @@
     # monitoring stack elsewhere
     #
     # @see https://docs.gitlab.com/omnibus/settings/rpi/#install-gitlab-via-the-official-repository
+    # @see https://docs.gitlab.com/omnibus/settings/memory_constrained_envs/#disable-monitoring
     - alertmanager
+    - gitlab_exporter
+    - gitlab_kas
     - node_exporter
+    - postgres_exporter
+    - prometheus_monitoring
     - prometheus
+    - redis_exporter
   loop_control:
     loop_var: property_name
+
+- name: Disable "puma['exporter_enabled']" property in '/etc/gitlab/gitlab.rb'
+  become: true
+  ansible.builtin.replace:
+    path: /etc/gitlab/gitlab.rb
+    regexp: '^.*puma\[.{1}exporter_enabled.{1}\]\s*=\s*(.*)$'
+    replace: "puma['exporter_enabled'] = false"
+
+- name: Disable "sidekiq['metrics_enabled']" property in '/etc/gitlab/gitlab.rb'
+  become: true
+  ansible.builtin.replace:
+    path: /etc/gitlab/gitlab.rb
+    regexp: '^.*sidekiq\[.{1}metrics_enabled.{1}\]\s*=\s*(.*)$'
+    replace: "sidekiq['metrics_enabled'] = false"
 
 - name: Create the '/etc/gitlab/ssl' directory
   become: true
