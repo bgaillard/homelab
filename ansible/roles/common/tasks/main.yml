@@ -34,12 +34,12 @@
         } | combine(network, recursive=True)
       }}
 - import_tasks: 01-host.yml
-- import_tasks: 01-journald.yml
-- import_tasks: 02-packages.yml
-- import_tasks: 03-disable-services.yml
-- import_tasks: 04-disable-bluetooth.yml
-- import_tasks: 05-disable-wifi.yml
-- import_tasks: 06-network.yml
-- import_tasks: 07-mount-srv-backups.yml
-- import_tasks: 08-update-ca-certificates.yml
-- import_tasks: 09-postfix.yml
+- import_tasks: 02-journald.yml
+- import_tasks: 03-packages.yml
+- import_tasks: 04-disable-services.yml
+- import_tasks: 05-disable-bluetooth.yml
+- import_tasks: 06-disable-wifi.yml
+- import_tasks: 07-network.yml
+- import_tasks: 08-mount-srv-backups.yml
+- import_tasks: 09-update-ca-certificates.yml
+- import_tasks: 10-postfix.yml
