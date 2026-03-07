@@ -1,0 +1,76 @@
+---
+# @see https://github.com/sys0dm1n/ansible-postfix/blob/master/postfix-install.yml
+- name: Set the 'postfix/mailname' debconf question
+  become: true
+  ansible.builtin.debconf:
+    name: postfix
+    question: postfix/mailname
+    value: "{{ ansible_facts['nodename'] }}.homelab.internal"
+    vtype: string
+
+- name: Set the 'postfix/main_mailer_type' debconf question
+  become: true
+  ansible.builtin.debconf:
+    name: postfix
+    question: postfix/main_mailer_type
+    value: 'Internet Site'
+    vtype: string
+
+- name: Install the 'postfix' package
+  become: true
+  ansible.builtin.package:
+    name: postfix
+    state: latest
+
+
+# @see https://www.linode.com/docs/guides/postfix-smtp-debian7/
+- name: Generate the '/etc/postfix/sasl_passwd' file
+  become: true
+  ansible.builtin.template:
+    src: etc/postfix/sasl_passwd.j2
+    dest: /etc/postfix/sasl_passwd
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Generate the '/etc/postfix/sasl_passwd.db' file
+  become: true
+  ansible.builtin.shell: |
+    postmap /etc/postfix/sasl_passwd
+    chown root:root /etc/postfix/sasl_passwd /etc/postfix/sasl_passwd.db
+    chmod 0600 /etc/postfix/sasl_passwd /etc/postfix/sasl_passwd.db
+
+- name: Configure the 'relayhost' property in '/etc/postfix/main.cf'
+  become: true
+  ansible.builtin.replace:
+    path: /etc/postfix/main.cf
+    regexp: '^relayhost\s=\s(\[.*\]\:\d+)?$'
+    replace: "relayhost = [{{ smtp.host }}]:{{ smtp.port }}"
+
+- name: Configure the 'smtp_tls_security_level' property in '/etc/postfix/main.cf'
+  become: true
+  ansible.builtin.replace:
+    path: /etc/postfix/main.cf
+    regexp: '^smtp_tls_security_level\s=\s(none|may|encrypt)$'
+    replace: "smtp_tls_security_level = encrypt"
+
+- name: Update the '/etc/postfix/main.cf' file
+  become: true
+  ansible.builtin.blockinfile:
+    path: /etc/postfix/main.cf
+    marker_begin: "POSTFIX_BEGIN"
+    marker_end: "POSTFIX_END"
+    append_newline: true
+    prepend_newline: true
+    block: |
+      smtp_sasl_auth_enable = yes
+      smtp_sasl_security_options = noanonymous
+      smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+      smtp_tls_wrappermode = yes
+
+- name: Restart the postfix service
+  become: true
+  ansible.builtin.systemd_service:
+    state: restarted
+    daemon_reload: true
+    name: postfix

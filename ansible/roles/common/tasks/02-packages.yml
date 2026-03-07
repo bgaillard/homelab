@@ -4,9 +4,15 @@
   ansible.builtin.package:
     name:
       - cifs-utils
+      - dnsutils
+      - libsasl2-modules
       - logrotate
+      - mailutils
       - rfkill
       - sysstat
+      # Postfix requires specific configuration so it is installed in the '09-postfix.yml' file.
+      #
+      # - postfix
     state: latest
 
 - name: Install additional Linux packages

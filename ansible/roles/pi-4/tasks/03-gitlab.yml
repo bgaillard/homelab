@@ -97,6 +97,15 @@
     regexp: '^.*sidekiq\[.{1}metrics_enabled.{1}\]\s*=\s*(.*)$'
     replace: "sidekiq['metrics_enabled'] = false"
 
+# Please note that all the homelab servers are configured with a Postfix server and 'sendmail' is correctly installed
+# and working (assuming the 'From' header is correctly set in the emails sent by Gitlab)
+- name: Configure the "gitlab_rails['gitlab_email_from']" property in '/etc/gitlab/gitlab.rb'
+  become: true
+  ansible.builtin.replace:
+    path: /etc/gitlab/gitlab.rb
+    regexp: '^.*gitlab_rails\[.{1}gitlab_email_from.{1}\]\s*=\s*(.*)$'
+    replace: "gitlab_rails['gitlab_email_from'] = '{{ gitlab_email_from }}'"
+
 - name: Create the '/etc/gitlab/ssl' directory
   become: true
   ansible.builtin.file:

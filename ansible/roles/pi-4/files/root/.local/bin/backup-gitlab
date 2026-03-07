@@ -3,6 +3,10 @@
 BACKUPS_DIR="/srv/backups"
 BACKUP_DIR="${BACKUPS_DIR}/gitlab"
 
+# FIXME: WE MUST also backup the configuration files.
+#
+# @see https://docs.gitlab.com/administration/backup_restore/backup_gitlab/#storing-configuration-files
+
 # Create the Gitlab backup
 echo "Creating Gitlab backup..."
 gitlab-backup create

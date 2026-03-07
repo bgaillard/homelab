@@ -62,3 +62,10 @@ network:
 
 # Additional Linux packages to be installed
 packages: []
+
+# SMTP configuration use to configure the Postfix service
+smtp:
+  host: mail.example.com
+  port: 465
+  username: john.doe@example.com
+  password: "xxxxxxxx"

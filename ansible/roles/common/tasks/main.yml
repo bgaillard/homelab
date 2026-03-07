@@ -33,6 +33,7 @@
           }
         } | combine(network, recursive=True)
       }}
+- import_tasks: 01-host.yml
 - import_tasks: 01-journald.yml
 - import_tasks: 02-packages.yml
 - import_tasks: 03-disable-services.yml
@@ -41,3 +42,4 @@
 - import_tasks: 06-network.yml
 - import_tasks: 07-mount-srv-backups.yml
 - import_tasks: 08-update-ca-certificates.yml
+- import_tasks: 09-postfix.yml

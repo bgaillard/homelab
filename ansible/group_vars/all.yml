@@ -7,3 +7,10 @@ backups_smb_share: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/da
 backups_smb_username: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/data/servers/smb:username') }}"
 backups_smb_password: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/data/servers/smb:password') }}"
 backups_smb_version: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/data/servers/smb:version') }}"
+
+# All servers use a Postfix server to easily send emails with the 'mail', 'mailx' or 'sendmail' command line utilities.
+smtp:
+  host: "{{ lookup('community.general.bitwarden', '9c839a59-a7e4-4be9-88c7-b40500b6248c', search='id', field='smtpHost') | first }}"
+  port: "{{ lookup('community.general.bitwarden', '9c839a59-a7e4-4be9-88c7-b40500b6248c', search='id', field='smtpPort') | first }}"
+  username: "{{ lookup('community.general.bitwarden', '9c839a59-a7e4-4be9-88c7-b40500b6248c', search='id', field='smtpUsername') | first }}"
+  password: "{{ lookup('community.general.bitwarden', '9c839a59-a7e4-4be9-88c7-b40500b6248c', search='id', field='smtpPassword') | first }}"

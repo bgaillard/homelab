@@ -1,7 +1,7 @@
 ---
 # All our servers use only one Ethernet network interface named 'eth0'.
 #
-# We also manage network configuration using the traditional 'ifupdown' method, all other methode (i.e. Netplan, 
+# We also manage network configuration using the traditional 'ifupdown' method, all other methods (i.e. Netplan,
 # NetworkManager, systemd-networkd, etc.) are disabled and uninstalled.
 #
 # @see https://wiki.debian.org/udev
