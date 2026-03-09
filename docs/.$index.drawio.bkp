@@ -1,4 +1,4 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.0 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.3.0">
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
   <diagram name="Architecture" id="HzzWTQujpqhk18xgROG4">
     <mxGraphModel dx="2276" dy="912" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="none" math="0" shadow="0">
       <root>
@@ -69,13 +69,13 @@
         <mxCell id="0y8WRJE9BpWfGIyJTyDu-14" parent="1" style="shape=note;strokeWidth=1;fontSize=14;size=10;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#666600;align=left;verticalAlign=top;shadow=1;" value="&lt;font&gt;&amp;nbsp;- Gateway&lt;/font&gt;&lt;div&gt;&lt;font&gt;&amp;nbsp;- SMB storage&lt;/font&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="50" width="110" x="140" y="230" as="geometry" />
         </mxCell>
-        <mxCell id="0y8WRJE9BpWfGIyJTyDu-15" parent="1" style="shape=note;strokeWidth=1;fontSize=14;size=10;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#666600;align=left;verticalAlign=top;shadow=1;" value="&lt;font&gt;&amp;nbsp;- Pi-hole&lt;/font&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(102, 102, 0), rgb(162, 162, 74));&quot;&gt;&amp;nbsp;&lt;br&gt;&amp;nbsp;- DNS server&lt;br&gt;&amp;nbsp;- Wireguard server&lt;/span&gt;" vertex="1">
+        <mxCell id="0y8WRJE9BpWfGIyJTyDu-15" parent="1" style="shape=note;strokeWidth=1;fontSize=14;size=10;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#666600;align=left;verticalAlign=top;shadow=1;" value="&lt;font&gt;&amp;nbsp;- Pi-hole&lt;/font&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(102, 102, 0), rgb(162, 162, 74));&quot;&gt;&amp;nbsp;&lt;br&gt;&amp;nbsp;- BIND&lt;br&gt;&amp;nbsp;- Wireguard&lt;/span&gt;" vertex="1">
           <mxGeometry height="60" width="135.8" x="-110" y="420" as="geometry" />
         </mxCell>
-        <mxCell id="0y8WRJE9BpWfGIyJTyDu-16" parent="1" style="shape=note;strokeWidth=1;fontSize=14;size=10;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#666600;align=left;verticalAlign=top;shadow=1;" value="&lt;font&gt;&amp;nbsp;- Vault server&lt;/font&gt;" vertex="1">
+        <mxCell id="0y8WRJE9BpWfGIyJTyDu-16" parent="1" style="shape=note;strokeWidth=1;fontSize=14;size=10;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#666600;align=left;verticalAlign=top;shadow=1;" value="&lt;font&gt;&amp;nbsp;- Gitlab&lt;br&gt;&amp;nbsp;- Hashicorp Vault&lt;/font&gt;" vertex="1">
           <mxGeometry height="60" width="140" x="120.79999999999998" y="420" as="geometry" />
         </mxCell>
-        <mxCell id="0y8WRJE9BpWfGIyJTyDu-17" parent="1" style="shape=note;strokeWidth=1;fontSize=14;size=10;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#666600;align=left;verticalAlign=top;shadow=1;" value="&lt;font&gt;&amp;nbsp;- Incus&lt;br&gt;&amp;nbsp;- Kubernetes&lt;/font&gt;" vertex="1">
+        <mxCell id="0y8WRJE9BpWfGIyJTyDu-17" parent="1" style="shape=note;strokeWidth=1;fontSize=14;size=10;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#666600;align=left;verticalAlign=top;shadow=1;" value="&lt;font&gt;&amp;nbsp;- Docker&lt;br&gt;&amp;nbsp;- Incus&lt;br&gt;&amp;nbsp;- Kubernetes&lt;/font&gt;" vertex="1">
           <mxGeometry height="60" width="139.2" x="350.8" y="415" as="geometry" />
         </mxCell>
       </root>

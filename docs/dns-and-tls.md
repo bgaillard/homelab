@@ -50,6 +50,8 @@ For example the `pi-4` machine deploys `gitlab` and `vault` accessible using 2 d
 
 ## TLS
 
+### Generate
+
 A unique self-signed TLS certificate for the `*.homelab.internal` wildcard domain has been generated with the following command:
 
 ```bash
@@ -84,3 +86,26 @@ The certificate and it's private key are then stored in Bitwarden (note `pi-4`) 
     As it is manually generated there is a risk of forgetting to renew it before the expiration date.
 
     In the long term we'll deploy a private PKI with Hashicorp Vault (see [Vault](vault.md)) to automate the generation and renewal of TLS certificates for the homelab.
+
+### Update trust stores
+
+#### Update Linux local trust store
+
+```bash
+# Update
+scp baptiste@pi-4:/usr/local/share/ca-certificates/homelab.internal.crt /tmp
+sudo cp /tmp/gitlab.crt /usr/local/share/ca-certificates/
+sudo update-ca-certificates
+
+# Check
+curl https://gitlab.homelab.internal:8200
+curl https://vault.homelab.internal:8200
+```
+
+#### Import in Google Chrome
+
+Go to `Settings -> Privacy and security -> Security -> Manage certificates` and then `Local certificates -> Custom -> Installed by you`.
+
+Click on the `Import` button and import the `/usr/local/share/ca-certificates/homelab.internal.crt` certificate.
+
+After import close Google Chrome and open it again. You should now be able to access `https://gitlab.homelab.internal` without any certificate warning.

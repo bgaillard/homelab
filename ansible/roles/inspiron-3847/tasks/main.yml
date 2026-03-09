@@ -1,3 +1,4 @@
 ---
 - import_tasks: 01-poweroff.yml
 - import_tasks: 02-backups.yml
+- import_tasks: 03-docker.yml

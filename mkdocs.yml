@@ -3,7 +3,9 @@ repo_url: "https://github.com/bgaillard/homelab"
 nav:
   - Introduction: index.md
   - DNS & TLS: dns-and-tls.md
+  - Docker: docker.md
   - Gitlab: gitlab.md
+  - Harbor: harbor.md
   - Kubernetes: kubernetes.md
   - Incus: incus.md
   - Pi-hole: pi-hole.md
