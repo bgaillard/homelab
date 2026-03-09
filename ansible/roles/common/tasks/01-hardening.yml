@@ -1,0 +1,64 @@
+---
+- name: SSH Hardening
+  become: true
+  ansible.builtin.replace:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?\s*{{ prop.name }}\s+(.*)$'
+    replace: "{{ prop.name }} {{ prop.value }}"
+  loop:
+    # @see https://linux-audit.com/ssh/audit-and-harden-your-ssh-configuration/#use-of-x11forwarding
+    - name: X11Forwarding
+      value: "no"
+
+    # @see https://linux-audit.com/ssh/audit-and-harden-your-ssh-configuration/#disable-rhosts
+    - name: IgnoreRhosts
+      value: "yes"
+
+    # @see https://linux-audit.com/ssh/audit-and-harden-your-ssh-configuration/#dns-hostname-checking
+    #
+    # FIXME: To be enabled after correct setup of a BIND server
+    # - name: UseDNS
+    #   value: "yes"
+
+    # @see https://linux-audit.com/ssh/audit-and-harden-your-ssh-configuration/#disable-empty-passwords
+    - name: PermitEmptyPasswords
+      value: "no"
+
+    # @see https://linux-audit.com/ssh/audit-and-harden-your-ssh-configuration/#maximum-authentication-attempts
+    - name: MaxAuthTries
+      value: "3"
+
+    # @see https://linux-audit.com/ssh/audit-and-harden-your-ssh-configuration/#public-key-authentication
+    - name: PubkeyAuthentication
+      value: "yes"
+    - name: PasswordAuthentication
+      value: "no"
+
+    # @see https://linux-audit.com/ssh/audit-and-harden-your-ssh-configuration/#disable-root-login
+    - name: PermitRootLogin
+      value: "no"
+
+    - name: MaxSessions
+      value: "2"
+
+    - name: TCPKeepAlive
+      value: "no"
+
+    # @see https://blog.stephane-robert.info/docs/securiser/durcissement/ssh/
+    - name: AllowAgentForwarding
+      value: "no"
+
+    - name: AllowTcpForwarding
+      value: "no"
+
+    - name: LogLevel
+      value: "VERBOSE"
+
+    - name: ClientAliveCountMax
+      value: "2"
+
+    - name: AllowUsers
+      value: "baptiste"
+
+  loop_control:
+    loop_var: prop
