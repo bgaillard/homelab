@@ -8,6 +8,11 @@ backups_smb_username: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv
 backups_smb_password: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/data/servers/smb:password') }}"
 backups_smb_version: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/data/servers/smb:version') }}"
 
+default_certs:
+  - file_name: "homelab.internal.crt"
+    content: "{{ lookup('community.general.bitwarden', '8fa44d76-0ecc-491f-a33a-b4060154471a', search='id', field='tlsCertificate') | first | replace('-----BEGIN CERTIFICATE-----', '__BC__') | replace('-----END CERTIFICATE-----', '__EC__') | replace(' ', '\n') | replace('__BC__', '-----BEGIN CERTIFICATE-----') | replace('__EC__', '-----END CERTIFICATE-----') }}"
+
+
 # All servers use a Postfix server to easily send emails with the 'mail', 'mailx' or 'sendmail' command line utilities.
 smtp:
   host: "{{ lookup('community.general.bitwarden', '9c839a59-a7e4-4be9-88c7-b40500b6248c', search='id', field='smtpHost') | first }}"

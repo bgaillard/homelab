@@ -1,13 +1,18 @@
 ---
-# TLS certificates to be trusted, those certificates will be copied to the
-# '/usr/local/share/ca-certificates/' folder and then the 'update-ca-certificates'
-# command will be executed.
+# TLS certificates to be trusted, those certificates will be copied to the '/usr/local/share/ca-certificates/' folder
+# and then the 'update-ca-certificates' command will be executed.
 certs: []
   # - file_name: "tls.crt"
   #   content: |
   #     -----BEGIN CERTIFICATE-----
   #     MIID...
   #     -----END CERTIFICATE-----
+
+# TLS certificates to be trusted by default, those certificates will be copied to the
+# '/usr/local/share/ca-certificates/' folder and then the 'update-ca-certificates' command will be executed.
+#
+# Those certificates are configured using group variables to configure them for all the servers.
+default_certs: []
 
 # Servers do no need several Linux services running by default.
 #
@@ -18,6 +23,10 @@ disabled_services:
 
 # Network configuration
 network:
+
+  # Additional 'aliases' to be added to the '/etc/hosts' file
+  host_aliases: []
+
   nameservers:
     - 192.168.1.1
     - 8.8.8.8

@@ -2,6 +2,7 @@ site_name: "Homelab"
 repo_url: "https://github.com/bgaillard/homelab"
 nav:
   - Introduction: index.md
+  - DNS & TLS: dns-and-tls.md
   - Gitlab: gitlab.md
   - Kubernetes: kubernetes.md
   - Incus: incus.md
@@ -12,7 +13,7 @@ nav:
   - IaC Updater: iac-updater.md
 
 # @see https://squidfunk.github.io/mkdocs-material/
-theme: 
+theme:
   #name: readthedocs
   name: material
   features:

@@ -5,4 +5,4 @@
   ansible.builtin.replace:
     path: /etc/hosts
     regexp: '^127.0.1.1\s+.*$'
-    replace: "127.0.1.1 {{ ansible_facts['nodename'] }}.homelab.internal {{ ansible_facts['nodename'] }}"
+    replace: "127.0.1.1 {{ ansible_facts['nodename'] }}.homelab.internal {{ ansible_facts['nodename'] }} {{ ' '.join(network.host_aliases) }}"

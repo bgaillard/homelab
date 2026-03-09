@@ -3,12 +3,10 @@
   roles:
     - role: common
       vars:
-        certs:
-          - file_name: "gitlab.crt"
-            content: "{{ lookup('community.general.bitwarden', '5f23f062-c642-4c10-8c57-b3dc01505dd6', search='id', field='gitlabTLSCertificate') | first | replace('-----BEGIN CERTIFICATE-----', '__BC__') | replace('-----END CERTIFICATE-----', '__EC__') | replace(' ', '\n') | replace('__BC__', '-----BEGIN CERTIFICATE-----') | replace('__EC__', '-----END CERTIFICATE-----') }}"
-          - file_name: "vault.crt"
-            content: "{{ lookup('community.general.bitwarden', '5f23f062-c642-4c10-8c57-b3dc01505dd6', search='id', field='vaultTLSCertificate') | first | replace('-----BEGIN CERTIFICATE-----', '__BC__') | replace('-----END CERTIFICATE-----', '__EC__') | replace(' ', '\n') | replace('__BC__', '-----BEGIN CERTIFICATE-----') | replace('__EC__', '-----END CERTIFICATE-----') }}"
         network:
+          host_aliases:
+            - "gitlab.homelab.internal"
+            - "vault.homelab.internal"
           ethernet:
             enabled: true
             mac_address: "{{ lookup('community.general.bitwarden', '5f23f062-c642-4c10-8c57-b3dc01505dd6', search='id', field='macAddress') | first }}"
@@ -19,10 +17,9 @@
       vars:
         # Gitlab
         gitlab_email_from: "{{ lookup('community.general.bitwarden', '9c839a59-a7e4-4be9-88c7-b40500b6248c', search='id', field='smtpUsername') | first }}"
-        gitlab_tls_cert: "{{ lookup('community.general.bitwarden', '5f23f062-c642-4c10-8c57-b3dc01505dd6', search='id', field='gitlabTLSCertificate') | first | replace('-----BEGIN CERTIFICATE-----', '__BC__') | replace('-----END CERTIFICATE-----', '__EC__') | replace(' ', '\n') | replace('__BC__', '-----BEGIN CERTIFICATE-----') | replace('__EC__', '-----END CERTIFICATE-----') }}"
-        gitlab_tls_key: "{{ lookup('community.general.bitwarden', '5f23f062-c642-4c10-8c57-b3dc01505dd6', search='id', field='gitlabTLSPrivateKey') | first | replace('-----BEGIN PRIVATE KEY-----', '__BK__') | replace('-----END PRIVATE KEY-----', '__EK__') | replace(' ', '\n') | replace('__BK__', '-----BEGIN PRIVATE KEY-----') | replace('__EK__', '-----END PRIVATE KEY-----') }}"
-
+        gitlab_tls_cert: "{{ lookup('community.general.bitwarden', '8fa44d76-0ecc-491f-a33a-b4060154471a', search='id', field='tlsCertificate') | first | replace('-----BEGIN CERTIFICATE-----', '__BC__') | replace('-----END CERTIFICATE-----', '__EC__') | replace(' ', '\n') | replace('__BC__', '-----BEGIN CERTIFICATE-----') | replace('__EC__', '-----END CERTIFICATE-----') }}"
+        gitlab_tls_key: "{{ lookup('community.general.bitwarden', '8fa44d76-0ecc-491f-a33a-b4060154471a', search='id', field='tlsPrivateKey') | first | replace('-----BEGIN PRIVATE KEY-----', '__BK__') | replace('-----END PRIVATE KEY-----', '__EK__') | replace(' ', '\n') | replace('__BK__', '-----BEGIN PRIVATE KEY-----') | replace('__EK__', '-----END PRIVATE KEY-----') }}"
         # Hashicorp Vault
-        vault_tls_cert: "{{ lookup('community.general.bitwarden', '5f23f062-c642-4c10-8c57-b3dc01505dd6', search='id', field='vaultTLSCertificate') | first | replace('-----BEGIN CERTIFICATE-----', '__BC__') | replace('-----END CERTIFICATE-----', '__EC__') | replace(' ', '\n') | replace('__BC__', '-----BEGIN CERTIFICATE-----') | replace('__EC__', '-----END CERTIFICATE-----') }}"
-        vault_tls_key: "{{ lookup('community.general.bitwarden', '5f23f062-c642-4c10-8c57-b3dc01505dd6', search='id', field='vaultTLSPrivateKey') | first | replace('-----BEGIN PRIVATE KEY-----', '__BK__') | replace('-----END PRIVATE KEY-----', '__EK__') | replace(' ', '\n') | replace('__BK__', '-----BEGIN PRIVATE KEY-----') | replace('__EK__', '-----END PRIVATE KEY-----') }}"
+        vault_tls_cert: "{{ lookup('community.general.bitwarden', '8fa44d76-0ecc-491f-a33a-b4060154471a', search='id', field='tlsCertificate') | first | replace('-----BEGIN CERTIFICATE-----', '__BC__') | replace('-----END CERTIFICATE-----', '__EC__') | replace(' ', '\n') | replace('__BC__', '-----BEGIN CERTIFICATE-----') | replace('__EC__', '-----END CERTIFICATE-----') }}"
+        vault_tls_key: "{{ lookup('community.general.bitwarden', '8fa44d76-0ecc-491f-a33a-b4060154471a', search='id', field='tlsPrivateKey') | first | replace('-----BEGIN PRIVATE KEY-----', '__BK__') | replace('-----END PRIVATE KEY-----', '__EK__') | replace(' ', '\n') | replace('__BK__', '-----BEGIN PRIVATE KEY-----') | replace('__EK__', '-----END PRIVATE KEY-----') }}"
         vault_version: "1.21.2"

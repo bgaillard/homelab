@@ -2,7 +2,7 @@
 gitlab_email_from: "john.doe@example.com"
 gitlab_tls_cert: "xxxxxxxx"
 gitlab_tls_key: "xxxxxxxx"
-gitlab_external_url: "https://gitlab"
+gitlab_external_url: "https://gitlab.homelab.internal"
 
 # HashiCorp Vault
 vault_tls_cert: "xxxxxxxx"

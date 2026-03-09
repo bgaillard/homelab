@@ -24,12 +24,17 @@
   ansible.builtin.apt:
     update_cache: yes
 
+# @see https://docs.gitlab.com/install/package/debian/?tab=Community+Edition#install-the-package
 - name: Install 'gitlab-ce' Linux package
   become: true
   ansible.builtin.package:
     name:
       - gitlab-ce
     state: latest
+  environment:
+    EXTERNAL_URL: "{{ gitlab_external_url }}"
+    # @see https://stackoverflow.com/questions/59213358/disable-gitlab-letsencrypt-as-option-when-installing-for-first-time#answer-60872970
+    GITLAB_OMNIBUS_CONFIG: "letsencrypt['enable'] = false"
 
 # @see https://docs.gitlab.com/omnibus/settings/configuration/#configure-the-external-url-for-gitlab
 - name: Configure the 'external_url' property in '/etc/gitlab/gitlab.rb'
@@ -117,14 +122,14 @@
   become: true
   ansible.builtin.copy:
     content: "{{ gitlab_tls_cert }}"
-    dest: /etc/gitlab/ssl/gitlab.crt
+    dest: /etc/gitlab/ssl/gitlab.homelab.internal.crt
     mode: '0644'
 
 - name: Copy Gitlab TLS private key
   become: true
   ansible.builtin.copy:
     content: "{{ gitlab_tls_key }}"
-    dest: /etc/gitlab/ssl/gitlab.key
+    dest: /etc/gitlab/ssl/gitlab.homelab.internal.key
     mode: '0600'
 
 - name: Reconfigure Gitlab
