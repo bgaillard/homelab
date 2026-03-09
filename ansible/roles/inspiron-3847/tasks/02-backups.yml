@@ -7,7 +7,7 @@
 
 - name: Copy file '~/.local/bin/backup-k8s-etcd'
   ansible.builtin.copy:
-    src: .local/bin/backup-k8s-etcd
+    src: home/baptiste/.local/bin/backup-k8s-etcd
     dest: "{{ ansible_facts['env']['HOME'] }}/.local/bin/backup-k8s-etcd"
     mode: u=rx
     force: true

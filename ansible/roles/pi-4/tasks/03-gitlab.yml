@@ -121,14 +121,14 @@
 - name: Copy Gitlab TLS certificate
   become: true
   ansible.builtin.copy:
-    content: "{{ gitlab_tls_cert }}"
+    content: "{{ tls.crt }}"
     dest: /etc/gitlab/ssl/gitlab.homelab.internal.crt
     mode: '0644'
 
 - name: Copy Gitlab TLS private key
   become: true
   ansible.builtin.copy:
-    content: "{{ gitlab_tls_key }}"
+    content: "{{ tls.key }}"
     dest: /etc/gitlab/ssl/gitlab.homelab.internal.key
     mode: '0600'
 

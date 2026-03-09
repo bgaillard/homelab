@@ -1,10 +1,11 @@
 # Gitlab CE
 gitlab_email_from: "john.doe@example.com"
-gitlab_tls_cert: "xxxxxxxx"
-gitlab_tls_key: "xxxxxxxx"
 gitlab_external_url: "https://gitlab.homelab.internal"
 
+# The wildcard TLS certificate for '*.homelab.internal'
+tls:
+  crt: "xxxxxxxx"
+  key: "xxxxxxxx"
+
 # HashiCorp Vault
-vault_tls_cert: "xxxxxxxx"
-vault_tls_key: "xxxxxxxx"
 vault_version: "1.21.2"

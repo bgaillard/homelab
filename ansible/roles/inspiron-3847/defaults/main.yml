@@ -7,3 +7,12 @@ backups_smb_share: "SambaShare"
 backups_smb_username: "SambaUser"
 backups_smb_password: "SambaPassword"
 backups_smb_version: "SambaVersion"
+
+harbor:
+  database:
+    password: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/data/harbor:database_password') }}"
+
+# The wildcard TLS certificate for '*.homelab.internal'
+tls:
+  crt: "xxxxxxxx"
+  key: "xxxxxxxx"

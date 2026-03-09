@@ -3,10 +3,12 @@
   become: true
   ansible.builtin.package:
     name:
+      # FIXME: Should be configurable from variables
       - cifs-utils
       - dnsutils
       - libsasl2-modules
       - logrotate
+      - lynis
       - mailutils
       - rfkill
       - sysstat

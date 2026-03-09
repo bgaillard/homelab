@@ -34,7 +34,7 @@
 - name: Copy Vault TLS certificate
   become: true
   ansible.builtin.copy:
-    content: "{{ vault_tls_cert }}"
+    content: "{{ tls.crt }}"
     dest: /opt/vault/tls/tls.crt
     owner: vault
     group: vault
@@ -43,7 +43,7 @@
 - name: Copy Vault TLS private key
   become: true
   ansible.builtin.copy:
-    content: "{{ vault_tls_key }}"
+    content: "{{ tls.key }}"
     dest: /opt/vault/tls/tls.key
     owner: vault
     group: vault

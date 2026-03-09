@@ -1,0 +1,79 @@
+---
+- name: Create the '/opt/harbor/' directory if it does not exist
+  become: true
+  ansible.builtin.file:
+    path: "/opt/harbor/"
+    state: directory
+    mode: '0755'
+
+# @see https://goharbor.io/docs/2.14.0/install-config/download-installer/
+- name: Create temporary directory to download the Harbor installed
+  ansible.builtin.tempfile:
+    state: directory
+  register: harbor_download_dir
+
+- name: Download the Harbor online installer
+  ansible.builtin.get_url:
+    url: https://github.com/goharbor/harbor/releases/download/v2.14.2/harbor-online-installer-v2.14.2.tgz
+    dest: "{{ harbor_download_dir.path }}/harbor-online-installer-v2.14.2.tgz"
+    mode: "0400"
+
+- name: Extract the Harbor online installer
+  become: true
+  ansible.builtin.unarchive:
+    src: "{{ harbor_download_dir.path }}/harbor-online-installer-v2.14.2.tgz"
+    dest: "{{ harbor_download_dir.path }}"
+    remote_src: yes
+
+- name: Move the extracted Harbor online installer to '/opt/harbor/'
+  become: true
+  ansible.builtin.shell:
+    cmd: "mv {{ harbor_download_dir.path }}/harbor/* /opt/harbor/"
+
+# FIXME: We should check the package with the '*.asc' signature file
+
+# @see https://goharbor.io/docs/2.14.0/install-config/configure-https/
+- name: Create the '/etc/docker/certs.d/harbor.homelab.internal/' directory if it does not exist
+  become: true
+  ansible.builtin.file:
+    path: "/etc/docker/certs.d/harbor.homelab.internal/"
+    state: directory
+    mode: '0755'
+
+- name: Copy Harbor TLS certificate
+  become: true
+  ansible.builtin.copy:
+    content: "{{ tls.crt }}"
+    dest: /etc/docker/certs.d/harbor.homelab.internal/harbor.homelab.internal.crt
+    mode: '0644'
+
+- name: Copy Harbor TLS private key
+  become: true
+  ansible.builtin.copy:
+    content: "{{ tls.key }}"
+    dest: /etc/docker/certs.d/harbor.homelab.internal/harbor.homelab.internal.key
+    mode: '0600'
+
+- name: Convert the CRT file to PEM format
+  become: true
+  ansible.builtin.command:
+    cmd: "openssl x509 -in /etc/docker/certs.d/harbor.homelab.internal/harbor.homelab.internal.crt -out /etc/docker/certs.d/harbor.homelab.internal/harbor.homelab.internal.cert"
+
+- name: Render the '/opt/harbor/harbor.yml' configuration file
+  become: true
+  ansible.builtin.template:
+    src: opt/harbor/harbor.yml.j2
+    dest: "/opt/harbor/harbor.yml"
+    mode: "0600"
+
+# FIXME: This is bad because it implies a downtime
+- name: Install Harbor
+  become: true
+  ansible.builtin.shell:
+    cmd: "./install.sh --with-trivy"
+    chdir: "/opt/harbor/"
+
+- name: Clean up temporary directory
+  ansible.builtin.file:
+    path: "{{ harbor_download_dir.path }}"
+    state: absent

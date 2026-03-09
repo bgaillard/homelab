@@ -10,8 +10,7 @@ backups_smb_version: "{{ lookup('community.hashi_vault.hashi_vault', 'secret=kv/
 
 default_certs:
   - file_name: "homelab.internal.crt"
-    content: "{{ lookup('community.general.bitwarden', '8fa44d76-0ecc-491f-a33a-b4060154471a', search='id', field='tlsCertificate') | first | replace('-----BEGIN CERTIFICATE-----', '__BC__') | replace('-----END CERTIFICATE-----', '__EC__') | replace(' ', '\n') | replace('__BC__', '-----BEGIN CERTIFICATE-----') | replace('__EC__', '-----END CERTIFICATE-----') }}"
-
+    content: "{{ tls.crt }}"
 
 # All servers use a Postfix server to easily send emails with the 'mail', 'mailx' or 'sendmail' command line utilities.
 smtp:
@@ -19,3 +18,8 @@ smtp:
   port: "{{ lookup('community.general.bitwarden', '9c839a59-a7e4-4be9-88c7-b40500b6248c', search='id', field='smtpPort') | first }}"
   username: "{{ lookup('community.general.bitwarden', '9c839a59-a7e4-4be9-88c7-b40500b6248c', search='id', field='smtpUsername') | first }}"
   password: "{{ lookup('community.general.bitwarden', '9c839a59-a7e4-4be9-88c7-b40500b6248c', search='id', field='smtpPassword') | first }}"
+
+# The wildcard TLS certificate for '*.homelab.internal'
+tls:
+  crt: "{{ lookup('community.general.bitwarden', '8fa44d76-0ecc-491f-a33a-b4060154471a', search='id', field='tlsCertificate') | first | replace('-----BEGIN CERTIFICATE-----', '__BC__') | replace('-----END CERTIFICATE-----', '__EC__') | replace(' ', '\n') | replace('__BC__', '-----BEGIN CERTIFICATE-----') | replace('__EC__', '-----END CERTIFICATE-----') }}"
+  key: "{{ lookup('community.general.bitwarden', '8fa44d76-0ecc-491f-a33a-b4060154471a', search='id', field='tlsPrivateKey') | first | replace('-----BEGIN PRIVATE KEY-----', '__BK__') | replace('-----END PRIVATE KEY-----', '__EK__') | replace(' ', '\n') | replace('__BK__', '-----BEGIN PRIVATE KEY-----') | replace('__EK__', '-----END PRIVATE KEY-----') }}"
