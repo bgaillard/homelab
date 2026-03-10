@@ -17,11 +17,6 @@
     repo: "deb [arch=arm64 signed-by=/usr/share/keyrings/gitlab_gitlab-ce-archive-keyring.gpg] https://packages.gitlab.com/gitlab/gitlab-ce/debian/ trixie main"
     state: present
     filename: gitlab_gitlab-ce
-    update_cache: no
-
-- name: Update apt cache
-  become: true
-  ansible.builtin.apt:
     update_cache: yes
 
 # @see https://docs.gitlab.com/install/package/debian/?tab=Community+Edition#install-the-package
@@ -110,6 +105,20 @@
     path: /etc/gitlab/gitlab.rb
     regexp: '^.*gitlab_rails\[.{1}gitlab_email_from.{1}\]\s*=\s*(.*)$'
     replace: "gitlab_rails['gitlab_email_from'] = '{{ gitlab_email_from }}'"
+
+# Disable Sentry
+- name: Configure the "gitlab_rails['sentry_enabled']" property in '/etc/gitlab/gitlab.rb'
+  become: true
+  ansible.builtin.replace:
+    path: /etc/gitlab/gitlab.rb
+    regexp: '^.*gitlab_rails\[.{1}sentry_enabled.{1}\]\s*=\s*(.*)$'
+    replace: "gitlab_rails['sentry_enabled'] = false"
+- name: Configure the "gitlab_pages['sentry_enabled']" property in '/etc/gitlab/gitlab.rb'
+  become: true
+  ansible.builtin.replace:
+    path: /etc/gitlab/gitlab.rb
+    regexp: '^.*gitlab_pages\[.{1}sentry_enabled.{1}\]\s*=\s*(.*)$'
+    replace: "gitlab_pages['sentry_enabled'] = false"
 
 - name: Create the '/etc/gitlab/ssl' directory
   become: true

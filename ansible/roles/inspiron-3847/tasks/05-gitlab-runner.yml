@@ -1,0 +1,35 @@
+---
+# @see https://docs.gitlab.com/runner/install/linux-repository/
+- name: Check the Gitlab Runner keyring file
+  ansible.builtin.stat:
+    path: /etc/apt/keyrings/runner_gitlab-runner-archive-keyring.gpg
+  register: gitlab_runner_keyring_file
+
+- name: Add Gitlab Runner keyring directory
+  ansible.builtin.shell:
+    cmd: wget -O - https://packages.gitlab.com/gpgkey/gpg.key | gpg --dearmor --yes -o /etc/apt/keyrings/runner_gitlab-runner-archive-keyring.gpg
+  become: true
+  when: not gitlab_runner_keyring_file.stat.exists
+
+- name: Add Gitlab Runner APT repository
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/runner_gitlab-runner-archive-keyring.gpg] https://packages.gitlab.com/runner/gitlab-runner/debian trixie main"
+    state: present
+    filename: gitlab_runner
+    update_cache: no
+
+- name: Add Gitlab Runner APT source repository
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "deb-src [arch=amd64 signed-by=/etc/apt/keyrings/runner_gitlab-runner-archive-keyring.gpg] https://packages.gitlab.com/runner/gitlab-runner/debian trixie main"
+    state: present
+    filename: gitlab_runner_src
+    update_cache: yes
+
+- name: Install 'gitlab-runner' Linux package
+  become: true
+  ansible.builtin.package:
+    name:
+      - gitlab-runner
+    state: latest

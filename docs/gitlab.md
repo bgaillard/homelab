@@ -33,3 +33,32 @@ COMPRESS_CMD="gzip -c --best" sudo gitlab-backup create
 
 # @see https://docs.gitlab.com/administration/backup_restore/backup_gitlab/?tab=Linux+package+%28Omnibus%29#upload-to-locally-mounted-shares
 ```
+
+
+## Runners
+
+For now only one runner has been configured on the Inspiron-3847 machine.
+
+The registration has been manually done (i.e. manually executing commands on the machine) following the [Register with a runner authentication token](https://docs.gitlab.com/runner/register/#register-with-a-runner-authentication-token).
+
+* Use of the _deprecated_ instance runner Registration Token (see [Register with a runner registration token](https://docs.gitlab.com/runner/register/#register-with-a-runner-registration-token-deprecated))
+* Executor is `docker`
+* Docker image is `python:latest`
+* Tags `default`
+
+
+!!! info "Local runner"
+
+    It is possible to have a local runner on the machine of the user to have more power for CI/CD jobs. This is not yet implemented but it is on the roadmap.
+
+
+## File `~/.gitconfig`
+
+For now only the `root` user has been created, a PAT named `git` allows to use Git in HTTPs without asking for credentials every time.
+
+The configuration of the `~/.gitconfig` file is like the following:
+
+```ini
+[url "https://root:xxxxxxxx@gitlab.homelab.internal"]
+  insteadOf = https://gitlab.homelab.internal
+```
