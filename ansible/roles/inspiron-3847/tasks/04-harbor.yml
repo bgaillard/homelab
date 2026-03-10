@@ -73,6 +73,22 @@
     cmd: "./install.sh --with-trivy"
     chdir: "/opt/harbor/"
 
+- name: Copy file '/etc/systemd/system/harbor.service'
+  become: true
+  ansible.builtin.copy:
+    src: etc/systemd/system/harbor.service
+    dest: "/etc/systemd/system/harbor.service"
+    mode: 644
+    force: true
+
+- name: Enable the 'harbor' service
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: true
+    name: harbor
+    enabled: true
+    state: started
+
 - name: Clean up temporary directory
   ansible.builtin.file:
     path: "{{ harbor_download_dir.path }}"

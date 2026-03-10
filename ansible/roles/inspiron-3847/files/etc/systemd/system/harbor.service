@@ -1,0 +1,13 @@
+[Unit]
+Description=Manage Harbor with Docker Compose
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/bash -c "docker compose -f /opt/harbor/docker-compose.yml start"
+ExecStop=/bin/bash -c "docker compose -f /opt/harbor/docker-compose.yml stop"
+
+[Install]
+WantedBy=multi-user.target
