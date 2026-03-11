@@ -21,9 +21,23 @@
   become: true
   ansible.builtin.blockinfile:
     path: /etc/fstab
+    # On some machines we encounter mount failure of the SMB share during boot because the network is not totally up yet.
+    #
+    # We tried the '_netdev' option, but it was not sufficient. We tried the 'x-systemd.after=network-online.target' but
+    # it did not work either.
+    #
+    # What did it was a combination of '_netdev' and 'x-systemd.automount' options.
+    #
+    # The 'x-systemd.automount' option adds a systemd service to perform the mount. For example it creates an
+    # 'srv-backups.automount' service for the '/srv/backups' mount point.
+    #
+    # @see https://www.freedesktop.org/software/systemd/man/latest/systemd.mount.html
+    # @see https://www.freedesktop.org/software/systemd/man/latest/systemd.automount.html
+    # @see https://forums.raspberrypi.com/viewtopic.php?t=343480
+    # @see https://www.debian-fr.org/t/resolu-etc-fstab-et-netdev/80543
     block: |
       # Mount the SMB share used for backups
-      //{{ backups_smb_server }}/{{ backups_smb_share }} /srv/backups cifs username={{ backups_smb_username }},password={{ backups_smb_password }},vers={{ backups_smb_version }},uid={{ ansible_facts['user_uid'] }},gid={{ ansible_facts['user_gid'] }} 0 0
+      //{{ backups_smb_server }}/{{ backups_smb_share }} /srv/backups cifs username={{ backups_smb_username }},password={{ backups_smb_password }},vers={{ backups_smb_version }},uid={{ ansible_facts['user_uid'] }},gid={{ ansible_facts['user_gid'] }},_netdev,x-systemd.automount 0 0
     backup: true
     marker: "# {mark} ANSIBLE MANAGED BLOCK - Hard Drives Mounts"
     state: present
