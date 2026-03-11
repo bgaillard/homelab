@@ -3,9 +3,20 @@
 BACKUPS_DIR="/srv/backups"
 BACKUP_DIR="${BACKUPS_DIR}/gitlab"
 
-# FIXME: WE MUST also backup the configuration files.
+echo "Creating backup directory if it doesn't exist..."
+mkdir -p "${BACKUP_DIR}"
+
+# Create a temporary directory used to create the configuration files backup
 #
 # @see https://docs.gitlab.com/administration/backup_restore/backup_gitlab/#storing-configuration-files
+TIMESTAMP=$(date +'%Y-%m-%d_%Hh%M')
+TMP_BACKUP_DIR="/tmp/gitlab"
+rm -Rf "${TMP_BACKUP_DIR}"
+mkdir -p "${TMP_BACKUP_DIR}/etc/gitlab"
+cp -R /etc/gitlab/* "${TMP_BACKUP_DIR}/etc/gitlab"
+
+echo "Creating archive for '/etc/gitlab' configuration files..."
+tar -czf "${BACKUP_DIR}/etc-gitlab-${TIMESTAMP}.tar.gz" -C "${TMP_BACKUP_DIR}" .
 
 # Create the Gitlab backup
 echo "Creating Gitlab backup..."
@@ -13,9 +24,13 @@ gitlab-backup create
 
 # Move the backup to the backup directory
 echo "Moving Gitlab backup to backup directory..."
-mkdir -p "${BACKUP_DIR}"
 mv /var/opt/gitlab/backups/* "${BACKUP_DIR}/"
 
 # Ensure we never have more than 7 backups
 echo "Keeping only last 7 backups..."
 find "${BACKUP_DIR}" -type f -name "*_gitlab_backup.tar" -printf '%T+ %p\n' | sort | head -n -7 | awk '{print $2}' | xargs -I {} rm {}
+find "${BACKUP_DIR}" -type f -name "etc-gitlab-*.tar.gz" -printf '%T+ %p\n' | sort | head -n -7 | awk '{print $2}' | xargs -I {} rm {}
+
+# Remove the backup from the temporary location
+echo "Cleaning up temporary files..."
+rm -Rf "${TMP_BACKUP_DIR}"

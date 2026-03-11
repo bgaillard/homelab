@@ -24,7 +24,7 @@ This page is organized through sections of the [AWS Well-Architected Framework](
 
 #### REL 9: How do you back up your data?
 
-* :orange_circle: Improve the Gitlab backup script to also backup the configuration files
+* :white_check_mark: Improve the Gitlab backup script to also backup the configuration files
 * [ ] Write a backup page referencing all backups
 * [ ] Find a way to have an S3-compatible backend for Terraform (for example garage), or use an other non-local backend (for example Gitlab, but it's not great because it prevent execution of Terraform with a Gitlab downtime)
 * [ ] See how to not stop the HashiCorp Vault server while performing backups with Vault OSS (probably requires the PostgreSQL storage backend)
